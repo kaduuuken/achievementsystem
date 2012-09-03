@@ -26,3 +26,7 @@ class Progress(models.Model):
     user = models.ForeignKey(User)
     progress_achievement = models.ForeignKey(ProgressAchievement)
     achieved_amount = models.PositiveIntegerField()
+
+class Task(models.Model):
+    name = models.CharField(_("Name"), max_length=255)
+    description = models.TextField(_("Description"))
