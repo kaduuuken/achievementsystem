@@ -39,3 +39,6 @@ class TaskProgress(models.Model):
     user = models.ForeignKey(User)
     task_achievement = models.ForeignKey(TaskAchievement)
     completed_tasks = models.ManyToManyField(Task, limit_choices_to={})
+
+class CollectionAchievement(Achievement):
+    achievements = models.ManyToManyField(Achievement, related_name="collection_achievements")
