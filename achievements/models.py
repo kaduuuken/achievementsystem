@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from filebrowser.fields import FileBrowseField
 from django.utils.translation import ugettext_lazy as _
 
@@ -13,3 +14,6 @@ class Achievement(models.Model):
     points = models.IntegerField(blank=False, default=0)
     icon = FileBrowseField(_("Icon"), directory='icons/', format='image', max_length=255, blank=False)
     category = models.ForeignKey(Category)
+
+class UserAchievement(Achievement):
+    users = models.ManyToManyField(User, related_name="achievements")
