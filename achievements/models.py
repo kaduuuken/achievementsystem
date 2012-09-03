@@ -21,3 +21,8 @@ class UserAchievement(Achievement):
 class ProgressAchievement(Achievement):
     required_amount = models.PositiveIntegerField()
     users = models.ManyToManyField(User, related_name="progress_achievements", through="Progress")
+
+class Progress(models.Model):
+    user = models.ForeignKey(User)
+    progress_achievement = models.ForeignKey(ProgressAchievement)
+    achieved_amount = models.PositiveIntegerField()
