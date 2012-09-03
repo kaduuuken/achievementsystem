@@ -30,3 +30,7 @@ class Progress(models.Model):
 class Task(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     description = models.TextField(_("Description"))
+
+class TaskAchievement(Achievement):
+    tasks = models.ManyToManyField(Task)
+    users = models.ManyToManyField(User, related_name="task_achievements", through="TaskProgress")
