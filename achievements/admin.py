@@ -10,3 +10,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class AchievementAdmin(admin.ModelAdmin):
     list_display=['name', 'description', 'category']
     search_fields = ('name', 'category')
+
+class ProgressAchievementAdmin(admin.ModelAdmin):
+    list_display=['name', 'description', 'category']
+    search_fields = ('name', 'category')
