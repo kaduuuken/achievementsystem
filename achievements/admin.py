@@ -32,13 +32,18 @@ class CollectionAchievementAdmin(admin.ModelAdmin):
 class TaskAdmin(admin.ModelAdmin):
     list_display=['name', 'description']
 
+class TaskProgressAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.ManyToManyField: {'widget': FilteredSelectMultiple("tasks", False)}
+    }
+
 admin.site.register(Achievement, AchievementAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(ProgressAchievement, ProgressAchievementAdmin)
 admin.site.register(Progress)
 admin.site.register(TaskAchievement, TaskAchievementAdmin)
 admin.site.register(Task, TaskAdmin)
-admin.site.register(TaskProgress)
+admin.site.register(TaskProgress, TaskProgressAdmin)
 admin.site.register(Trophies)
 admin.site.register(UserAchievement)
 admin.site.register(CollectionAchievement, CollectionAchievementAdmin)
