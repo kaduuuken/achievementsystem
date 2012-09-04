@@ -7,6 +7,12 @@ import validate
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     parent_category = models.ForeignKey('self', blank=True, null=True, related_name="child_categories")
+    
+    def __unicode__(self):
+        if (self.parent_category != None):
+            return "%s -> %s" % (self.parent_category, self.name)
+        else:
+            return "%s" % (self.name)
 
 class Achievement(models.Model):
     name = models.CharField(_("Name"), max_length=255)
