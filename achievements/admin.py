@@ -21,3 +21,10 @@ class TaskAchievementAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.ManyToManyField: {'widget': FilteredSelectMultiple("tasks", False)}
     }
+
+class CollectionAchievementAdmin(admin.ModelAdmin):
+    list_display=['name', 'description', 'category']
+    search_fields = ('name', 'category')
+    formfield_overrides = {
+        models.ManyToManyField: {'widget': FilteredSelectMultiple("achievements", False)}
+    }
