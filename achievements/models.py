@@ -20,6 +20,9 @@ class Achievement(models.Model):
     points = models.IntegerField(blank=False, default=0)
     icon = FileBrowseField(_("Icon"), directory='icons/', format='image', max_length=255, blank=False)
     category = models.ForeignKey(Category)
+    
+    def __unicode__(self):
+        return self.name
 
 class UserAchievement(Achievement):
     users = models.ManyToManyField(User, related_name="achievements")
