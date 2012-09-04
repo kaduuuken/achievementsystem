@@ -58,7 +58,10 @@ class CollectionAchievement(Achievement):
 class Trophies(models.Model):
     achievement = models.ForeignKey(Achievement, blank=True)
     user = models.ForeignKey(User)
-    position = models.PositiveIntegerField(validators=[validate.validate_max()])
+    position = models.PositiveIntegerField(validators=[validate.validate_max])
 
     class Meta:
         unique_together = ("user","position")
+    
+    def __unicode__(self):
+        return self.achievement.name
