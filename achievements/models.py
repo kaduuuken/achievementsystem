@@ -39,6 +39,9 @@ class Progress(models.Model):
 class Task(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     description = models.TextField(_("Description"))
+    
+    def __unicode__(self):
+        return self.name
 
 class TaskAchievement(Achievement):
     tasks = models.ManyToManyField(Task)
