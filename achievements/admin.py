@@ -14,3 +14,10 @@ class AchievementAdmin(admin.ModelAdmin):
 class ProgressAchievementAdmin(admin.ModelAdmin):
     list_display=['name', 'description', 'category']
     search_fields = ('name', 'category')
+
+class TaskAchievementAdmin(admin.ModelAdmin):
+    list_display=['name', 'description', 'category']
+    search_fields = ('name', 'category')
+    formfield_overrides = {
+        models.ManyToManyField: {'widget': FilteredSelectMultiple("tasks", False)}
+    }
