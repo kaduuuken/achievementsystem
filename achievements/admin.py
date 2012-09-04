@@ -37,6 +37,9 @@ class TaskProgressAdmin(admin.ModelAdmin):
         models.ManyToManyField: {'widget': FilteredSelectMultiple("tasks", False)}
     }
 
+class TrophiesAdmin(admin.ModelAdmin):
+    list_display=['achievement', 'position']
+
 admin.site.register(Achievement, AchievementAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(ProgressAchievement, ProgressAchievementAdmin)
@@ -44,6 +47,6 @@ admin.site.register(Progress)
 admin.site.register(TaskAchievement, TaskAchievementAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(TaskProgress, TaskProgressAdmin)
-admin.site.register(Trophies)
+admin.site.register(Trophies, TrophiesAdmin)
 admin.site.register(UserAchievement)
 admin.site.register(CollectionAchievement, CollectionAchievementAdmin)
