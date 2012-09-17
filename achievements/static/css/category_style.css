@@ -8,3 +8,8 @@
 .content h1{
     text-align: center;
 }
+
+.content a{
+    color:#990000;
+    text-decoration: none;
+}
