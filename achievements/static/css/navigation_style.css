@@ -1,3 +1,8 @@
 .navi_content{
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.navi_content a{
+    color:#990000;
+    text-decoration: none;
+}
