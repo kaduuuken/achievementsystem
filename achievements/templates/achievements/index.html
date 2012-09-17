@@ -1,0 +1,12 @@
+{% include "achievements/navigation.html" %}
+
+<div>
+    <p><b>Trophies</b></p>
+    <ul>
+        {% for trophy in trophies_list %}
+        <li>
+            {{ trophy }}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
