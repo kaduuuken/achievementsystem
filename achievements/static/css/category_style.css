@@ -13,3 +13,8 @@
     color:#990000;
     text-decoration: none;
 }
+
+.child{
+    width: 35%;
+    position: absolute;
+}
