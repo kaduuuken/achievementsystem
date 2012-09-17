@@ -6,3 +6,7 @@
     color:#990000;
     text-decoration: none;
 }
+
+.navi_content a:active{
+    color:#003366; 
+}
