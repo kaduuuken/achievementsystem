@@ -33,6 +33,7 @@ class TaskAdmin(admin.ModelAdmin):
     list_display=['name', 'description']
 
 class TaskProgressAdmin(admin.ModelAdmin):
+    list_display=['task_achievement', 'user']
     formfield_overrides = {
         models.ManyToManyField: {'widget': FilteredSelectMultiple("tasks", False)}
     }
