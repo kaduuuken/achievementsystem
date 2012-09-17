@@ -1,0 +1,40 @@
+{% load staticfiles %}
+{% include "achievements/navigation.html" %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/category_style.css"/>
+
+<div class="content">
+    {% for category in all_categories %}
+        {% if category.id|stringformat:"s" == categoryID %}
+            {% if category.parent_category > 0 %}
+                <h1>{{ category.parent_category }} -> {{ category.name }}</h1>
+            {% else %}
+                <h1>{{ category.name }}</h1>
+            {% endif %}
+            {% if category.child_categories.all.count > 0 %}
+                <p><b>Summary of Achievements earned</b></p>
+                <p>Here's the progress bar for {{ category.name }}</p>
+                <div class="child">
+                    {% for child in category.child_categories.all %}
+                        <p><b>{{ child.name }}</b></p>
+                        <p>Here's the progress bar for {{ child.name }}</p>
+                        <a href="{% url achievements:category category_id=child.id %}">show Achievements</a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% if achievement_list %}
+                    <p><b>Summary of Achievements earned</b></p>
+                    <p>Here's the progress bar for {{ category.name }}</p>
+                    <p><b>Achievements:</b></p>
+                    <ul>
+                    {% for achievement in achievement_list %}
+                        <li>{{ achievement.name }} <br/> {{ achievement.description }} <br/> <b>Points:</b> {{ achievement.points }} </li>
+                        
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No Achievements!</p>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</div>
