@@ -1,0 +1,15 @@
+{% load staticfiles %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/navigation_style.css"/>
+
+<div class="navi_content">
+    <ul>
+        {% for category in category_list %}
+        <li>
+            <a href="{% url achievements:category category_id=category.id %}"><b>{{ category.name }}</b></a>
+            {% if category.child_categories.all.count > 0 %}
+                {% include "achievements/category_include.html" with category=category template="achievements/category_include.html" %}
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
