@@ -1,12 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
-from filebrowser.fields import FileBrowseField
+#from filebrowser.fields import FileBrowseField
 from django.utils.translation import ugettext_lazy as _
 import validate
 
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     parent_category = models.ForeignKey('self', blank=True, null=True, related_name="child_categories")
+    
+    def count_achievements(self):
+        return self.achievements.all().count()
+    
+    def count_all_achievements(self):
+        count = 0
+        for cat in self.child_categories.all():
+            count += cat.count_all_achievements()
+        count += self.achievements.all().count()
+        return count
     
     def __unicode__(self):
         if (self.parent_category != None):
@@ -18,8 +28,8 @@ class Achievement(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     description = models.TextField(_("Description"))
     points = models.IntegerField(blank=False, default=0)
-    icon = FileBrowseField(_("Icon"), directory='icons/', format='image', max_length=255, blank=True)
-    category = models.ForeignKey(Category)
+    #icon = FileBrowseField(_("Icon"), directory='icons/', format='image', max_length=255, blank=True)
+    category = models.ForeignKey(Category, related_name="achievements")
     
     def __unicode__(self):
         return self.name
