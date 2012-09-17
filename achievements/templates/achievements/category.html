@@ -11,19 +11,26 @@
                 <h1>{{ category.name }}</h1>
             {% endif %}
             {% if category.child_categories.all.count > 0 %}
-                <p><b>Summary of Achievements earned</b></p>
-                <p>Here's the progress bar for {{ category.name }}</p>
-                <div class="child">
-                    {% for child in category.child_categories.all %}
-                        <p><b>{{ child.name }}</b></p>
-                        <p>Here's the progress bar for {{ child.name }}</p>
-                        <a href="{% url achievements:category category_id=child.id %}">show Achievements</a>
-                    {% endfor %}
-                </div>
-            {% else %}
-                {% if achievement_list %}
+                <div class="overview">
                     <p><b>Summary of Achievements earned</b></p>
                     <p>Here's the progress bar for {{ category.name }}</p>
+                    <p>{{ category.count_all_achievements }}</p>
+                </div>
+                {% for child in category.child_categories.all %}
+                    <div class="child">
+                        <p><b>{{ child.name }}</b></p>
+                        <p>Here's the progress bar for {{ child.name }}</p>
+                        <p>{{ child.count_achievements }}</p>
+                        <a href="{% url achievements:category category_id=child.id %}">show Achievements</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% if achievement_list %}
+                    <div class="overview">
+                        <p><b>Summary of Achievements earned</b></p>
+                        <p>Here's the progress bar for {{ category.name }}</p>
+                        <p>{{ achievement_list.count }}</p>
+                    </div>
                     <p><b>Achievements:</b></p>
                     <ul>
                     {% for achievement in achievement_list %}
