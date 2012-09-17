@@ -18,7 +18,7 @@ class Achievement(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     description = models.TextField(_("Description"))
     points = models.IntegerField(blank=False, default=0)
-    icon = FileBrowseField(_("Icon"), directory='icons/', format='image', max_length=255, blank=False)
+    icon = FileBrowseField(_("Icon"), directory='icons/', format='image', max_length=255, blank=True)
     category = models.ForeignKey(Category)
     
     def __unicode__(self):
@@ -51,6 +51,9 @@ class TaskProgress(models.Model):
     user = models.ForeignKey(User)
     task_achievement = models.ForeignKey(TaskAchievement)
     completed_tasks = models.ManyToManyField(Task, limit_choices_to={})
+    
+    def __unicode__(self):
+        return self.task_achievement.name
 
 class CollectionAchievement(Achievement):
     achievements = models.ManyToManyField(Achievement, related_name="collection_achievements")
@@ -59,7 +62,7 @@ class Trophies(models.Model):
     achievement = models.ForeignKey(Achievement, blank=True)
     user = models.ForeignKey(User)
     position = models.PositiveIntegerField(validators=[validate.validate_max])
-
+    
     class Meta:
         unique_together = ("user","position")
     
