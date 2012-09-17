@@ -1,0 +1,10 @@
+<ul>
+    {% for child in category.child_categories.all %}
+        <li>
+            <a href="{% url achievements:category category_id=child.id %}">{{ child.name }}</a>
+            {% if child.child_categories.all.count > 0 %}
+                {% include template with category=child %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
