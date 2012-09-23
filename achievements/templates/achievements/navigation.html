@@ -5,7 +5,11 @@
     <ul>
         {% for category in category_list %}
         <li>
-            <a href="{% url achievements:category category_id=category.id %}"><b>{{ category.name }}</b></a>
+            {% if category.parent_category == None %}
+                <a href="{% url achievements:overview %}"><b>{{ category.name }}</b></a>
+            {% else %}
+                <a href="{% url achievements:category category_id=category.id %}"><b>{{ category.name }}</b></a>
+            {% endif %}
             {% if category.child_categories.all.count > 0 %}
                 {% include "achievements/category_include.html" with category=category template="achievements/category_include.html" %}
             {% endif %}
