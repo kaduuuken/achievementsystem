@@ -11,14 +11,16 @@ def Overview(request):
     trophies = Trophies.objects.all()
     for trophy in trophies:
         trophies_list[trophy.position] = trophy.achievement
-    print trophies_list
-    return render_to_response('achievements/index.html',{'category_list': category_list, 'trophies_list': trophies_list})
+    return render_to_response('achievements/index.html',
+                              {'category_list': category_list, 'trophies_list': trophies_list},
+                              context_instance=RequestContext(request))
 
 def CategoryView(request, category_id):
     category_list = Category.objects.filter(parent_category__isnull=True)
     all_categories = Category.objects.all()
     achievement_list = Achievement.objects.filter(category__id = category_id)
-    
+    achievements_accomplished = Achievement.objects.filter(users = request.user)
     return render_to_response('achievements/category.html',
-                              {'category_list': category_list,'all_categories': all_categories, 'achievement_list': achievement_list, 'categoryID': category_id},
+                              {'category_list': category_list,'all_categories': all_categories, 
+                               'achievement_list': achievement_list, 'achievements_accomplished': achievements_accomplished, 'categoryID': category_id}, 
                               context_instance=RequestContext(request))
