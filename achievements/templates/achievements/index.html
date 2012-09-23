@@ -1,12 +1,24 @@
+{% load staticfiles %}
 {% include "achievements/navigation.html" %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/index_style.css"/>
 
-<div>
-    <p><b>Trophies</b></p>
-    <ul>
-        {% for trophy in trophies_list %}
-        <li>
-            {{ trophy }}
-        </li>
-        {% endfor %}
-    </ul>
+<div class="content">
+    {% for category in category_list %}
+        <h1>{{ category.name }}</h1>
+        <p><b>Trophies</b></p>
+        <div class="trophy-menu">
+            {% for trophy in trophies_list %}
+                <div id="trophy">
+                    <div class="icon">
+						{% if trophy.icon != None %}
+							<img src="{{ trophy.icon.url }}" alt="Achievement" title="{{ trophy.category }} - {{ trophy }}" />
+						{% else %}
+							<img src="{{ MEDIA_URL}}uploads/icons/x.png" alt="Empty" />
+						{% endif %}
+					</div>
+                    <div id="button"><p><a href="">Customize</a></p></div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
 </div>
