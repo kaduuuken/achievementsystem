@@ -1,8 +1,7 @@
 .content{
-  margin-left: 25%;
-  margin-top: -35%;
-  width: 70%;
-  font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    float: right;
+    width: 75%;
 }
 
 .content h1{
@@ -15,6 +14,48 @@
 }
 
 .child{
-    width: 35%;
-    position: absolute;
+    height: 200px;
+    width: 50%;
+    float:left;
+}
+
+.achievement-menu{
+    border-style: solid;
+    border-width: 1px;
+    overflow:scroll;
+    overflow-x: hidden;
+    height: 50%;
+}
+
+.achievements{
+    border-style: solid;
+    border-width: 1px;
+    height: 120px;
+    margin: 10px;
+    text-align: justify;
+}
+
+.icon{
+    float: left;
+    width: 10%;
+}
+
+.achievement-content{
+    text-align: center;
+    float:left;
+    width: 85%;
+}
+
+.points{
+    float:left;
+    margin-top: 2%;
+}
+
+.grey_achievements{
+    border-style: solid;
+    border-width: 1px;
+    background-color:#999999;
+    height: 120px;
+    margin: 10px;
+    text-align: justify;
 }
