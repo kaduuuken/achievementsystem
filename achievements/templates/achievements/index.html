@@ -20,5 +20,20 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="overview">
+            {% if category.child_categories.all.count > 0 %}
+                <div class="overview">
+                    <p><b>Summary of Achievements earned</b></p>
+                    <p>Here's the progress bar for {{ category.name }} - {{ category.count_all_achievements }}</p>
+                </div>
+                {% for child in category.child_categories.all %}
+                    <div class="child">
+                        <p><b>{{ child.name }}</b></p>
+                        <p>Here's the progress bar for {{ child.name }} - {{ child.count_all_achievements }}</p>
+                        <a href="{% url achievements:category category_id=child.id %}">show Achievements</a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
     {% endfor %}
 </div>
