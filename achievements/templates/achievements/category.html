@@ -6,21 +6,24 @@
     {% for category in all_categories %}
         {% if category.id|stringformat:"s" == categoryID %}
             {% if category.parent_category > 0 %}
-                <h1>{{ category.parent_category }} -> {{ category.name }}</h1>
+                <h1>{{ category.parent_category }} - {{ category.name }}</h1>
             {% else %}
                 <h1>{{ category.name }}</h1>
             {% endif %}
             {% if category.child_categories.all.count > 0 %}
                 <div class="overview">
                     <p><b>Summary of Achievements earned</b></p>
-                    <p>Here's the progress bar for {{ category.name }}</p>
-                    <p>{{ category.count_all_achievements }}</p>
+                    <p>{{ all_bar }} / {{ category.count_all_achievements }}</p>
                 </div>
                 {% for child in category.child_categories.all %}
                     <div class="child">
                         <p><b>{{ child.name }}</b></p>
+                        <p>{{ cycle }}</p>
                         <p>Here's the progress bar for {{ child.name }}</p>
-                        <p>{{ child.count_achievements }}</p>
+                        {% with count=forloop.counter0 %}
+						{{ count }}
+						<p>{{ child_progress.count }} / {{ child.count_achievements }}</p>
+						{% endwith %}
                         <a href="{% url achievements:category category_id=child.id %}">show Achievements</a>
                     </div>
                 {% endfor %}
@@ -29,15 +32,11 @@
                     <div class="overview">
                         <p><b>Summary of Achievements earned</b></p>
                         <p>Here's the progress bar for {{ category.name }}</p>
-                        <p>{{ achievement_list.count }}</p>
+                        <p>{{ progress }} / {{ category.count_achievements }}</p>
                     </div>
                     <p><b>Achievements:</b></p>
-                    <ul>
-                    {% for achievement in achievement_list %}
-                        <li>{{ achievement.name }} <br/> {{ achievement.description }} <br/> <b>Points:</b> {{ achievement.points }} </li>
-                        
-                    {% endfor %}
-                    </ul>
+                    <div class="achievement-menu">
+                    </div>
                 {% else %}
                     <p>No Achievements!</p>
                 {% endif %}
