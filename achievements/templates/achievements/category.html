@@ -36,6 +36,38 @@
                     </div>
                     <p><b>Achievements:</b></p>
                     <div class="achievement-menu">
+                        {% for achievement in achievement_list %}
+                            {% if achievement in achievements_accomplished %}
+                                <div class="achievements">
+                                    <div class="icon">
+                                        <img src="{{ achievement.icon.url }}" alt="Achievement" />
+                                    </div>
+                                    <div class="achievement-content">
+                                        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+                                    </div>
+                                    <div class="points">
+                                        <p>{{ achievement.points }}</p>
+                                        <p>XP</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% for achievement in achievement_list %}
+                            {% if not achievement in achievements_accomplished %}
+                                <div class="grey_achievements">
+                                    <div class="icon">
+                                        <img src="{{ MEDIA_URL}}uploads/icons/standard.png" alt="Standard" />
+                                    </div>
+                                    <div class="achievement-content">
+                                        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+                                    </div>
+                                    <div class="points">
+                                        <p>{{ achievement.points }}</p>
+                                        <p>XP</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 {% else %}
                     <p>No Achievements!</p>
