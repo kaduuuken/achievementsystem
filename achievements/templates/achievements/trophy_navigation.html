@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/navigation_style.css"/>
+
+<div class="navi_content">
+    <ul>
+        {% for category in category_list %}
+        <li>
+            {% if category.parent_category == None %}
+                <a href="{% url achievements:trophy %}"><b>{{ category.name }}</b></a>
+            {% else %}
+                <a href="{% url achievements:trophy_category category_id=category.id %}"><b>{{ category.name }}</b></a>
+            {% endif %}
+            {% if category.child_categories.all.count > 0 %}
+               <ul>
+                    {% for child in category.child_categories.all %}
+                        <li>
+                            <a href="{% url achievements:trophy_category category_id=child.id %}">{{ child.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
