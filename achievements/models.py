@@ -63,9 +63,6 @@ class Achievement(models.Model):
     def render(self):
         output = "<p><b>%s</b></p><p>%s</p>" % (self.name, self.description)
         return output
-    
-    #def make_trophy(self):
-        #return self
 
 class Trophies(models.Model):
     achievement = models.ForeignKey(Achievement, blank=True, related_name="trophy")
@@ -73,14 +70,14 @@ class Trophies(models.Model):
     position = models.PositiveIntegerField(validators=[validate.validate_max])
     
     class Meta:
-        unique_together = ("user","position")
+        unique_together = (("user","position"),("user", "achievement"))
     
     def clean(self):
         from django.core.exceptions import ValidationError
-        if self.achievement.users != self.user:
+        try:
+            self.achievement.users.get(id=self.user.id)
+        except:
             raise ValidationError('This User has not earned this achievement yet')
-        if self.achievement.users is None:
-            raise ValidationError('Select an achievement that has already been earned')
         if self.user is None:
             raise ValidationError('Select an User')
     
