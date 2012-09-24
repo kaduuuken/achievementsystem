@@ -7,12 +7,35 @@ import settings
 
 def Overview(request):
     category_list = Category.objects.filter(parent_category__isnull=True)
+    all_categories = Category.objects.all()
+    achievements_accomplished = Achievement.objects.filter(users__username = request.user.username)
     trophies_list = [None]*(settings.SET_PARAMETER+1)
     trophies = Trophies.objects.all()
     for trophy in trophies:
         trophies_list[trophy.position] = trophy.achievement
+    for cat in all_categories:
+        #print cat.parent_category
+        if cat.parent_category is None:
+            #progress = Category.progressbar(cat, request.user)
+            all_bar = Category.all_progressbar(cat, request.user)
     return render_to_response('achievements/index.html',
-                              {'category_list': category_list, 'trophies_list': trophies_list},
+                              {'category_list': category_list, 'trophies_list': trophies_list, 'all_bar': all_bar,
+                               'achievements_accomplished': achievements_accomplished},
+                              context_instance=RequestContext(request))
+
+def TrophyView(request):
+    category_list = Category.objects.filter(parent_category__isnull=True)
+    return render_to_response('achievements/trophy.html', 
+                              {'category_list': category_list}, 
+                              context_instance=RequestContext(request))
+
+def TrophyCategoryView(request, category_id):
+    category_list = Category.objects.filter(parent_category__isnull=True)
+    achievement_list = Achievement.objects.filter(category__parent_category__id = category_id)
+    achievements_accomplished = Achievement.objects.filter(users = request.user)
+    return render_to_response('achievements/trophy_category.html', 
+                              {'category_list': category_list,'achievement_list': achievement_list, 
+                               'achievements_accomplished': achievements_accomplished,}, 
                               context_instance=RequestContext(request))
 
 def CategoryView(request, category_id):
@@ -21,6 +44,7 @@ def CategoryView(request, category_id):
     children = Category.objects.filter(parent_category__id = category_id)
     achievement_list = Achievement.objects.filter(category__id = category_id)
     achievements_accomplished = Achievement.objects.filter(users = request.user)
+    
     for cat in all_categories:
         if cat.id == int(category_id):
             progress = Category.progressbar(cat, request.user)
