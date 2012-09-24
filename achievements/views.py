@@ -23,6 +23,12 @@ def Overview(request):
                                'achievements_accomplished': achievements_accomplished},
                               context_instance=RequestContext(request))
 
+def TrophyView(request):
+    category_list = Category.objects.filter(parent_category__isnull=True)
+    return render_to_response('achievements/trophy.html', 
+                              {'category_list': category_list}, 
+                              context_instance=RequestContext(request))
+
 def CategoryView(request, category_id):
     category_list = Category.objects.filter(parent_category__isnull=True)
     all_categories = Category.objects.all()
