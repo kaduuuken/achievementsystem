@@ -40,10 +40,15 @@
                             {% if achievement in achievements_accomplished %}
                                 <div class="achievements">
                                     <div class="icon">
-                                        <img src="{{ achievement.icon.url }}" alt="Achievement" />
+                                        <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" />
                                     </div>
                                     <div class="achievement-content">
                                         {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+                                    </div>
+                                    <div class="trophy">
+                                        <button type="button" onclick="">
+                                            <img src="{{ MEDIA_URL }}uploads/icons/trophy.png" alt="Trophy" />
+                                        </button>
                                     </div>
                                     <div class="points">
                                         <p>{{ achievement.points }}</p>
@@ -56,10 +61,12 @@
                             {% if not achievement in achievements_accomplished %}
                                 <div class="grey_achievements">
                                     <div class="icon">
-                                        <img src="{{ MEDIA_URL}}uploads/icons/standard.png" alt="Standard" />
+                                        <img src="{{ MEDIA_URL }}uploads/icons/standard.png" alt="Standard" />
                                     </div>
                                     <div class="achievement-content">
                                         {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+                                    </div>
+                                    <div class="trophy">
                                     </div>
                                     <div class="points">
                                         <p>{{ achievement.points }}</p>
