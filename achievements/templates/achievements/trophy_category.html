@@ -1,0 +1,34 @@
+{% load staticfiles %}
+{% include "achievements/trophy_navigation.html" %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/category_style.css"/>
+<link href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" rel="stylesheet">
+<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+
+<div class="content">
+    {% if achievement_list %}
+        <p><b>Achievements:</b></p>
+        <div class="achievement-menu">
+            {% for achievement in achievement_list %}
+                {% if achievement in achievements_accomplished %}
+                    <div class="achievements">
+                        <div class="icon">
+                            <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" />
+                        </div>
+                        <div class="achievement-content">
+                            {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+                        </div>
+                        <div class="trophy">
+                            <a href="">Trophy</a>
+                        </div>
+                        <div class="points">
+                            <p>{{ achievement.points }}</p>
+                            <p>XP</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No Achievements!</p>
+    {% endif %}
+</div>
