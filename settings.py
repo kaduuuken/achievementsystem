@@ -127,7 +127,6 @@ INSTALLED_APPS = (
     'achievements',
     #requirements
     'filebrowser',
-    'grappelli',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -152,3 +151,5 @@ LOGGING = {
         },
     }
 }
+
+LOGIN_URL = '/admin'
