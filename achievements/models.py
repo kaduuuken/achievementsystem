@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from filebrowser.fields import FileBrowseField
 from django.utils.translation import ugettext_lazy as _
+from django.core.validators import MaxLengthValidator
 import validate
 
 class Category(models.Model):
@@ -29,10 +30,8 @@ class Category(models.Model):
     def all_progressbar(self, User):
         count = 0
         for child in self.child_categories.all():
-            for ach in child.achievements.all():
-                for user in ach.users.all():
-                    if user.username != User:
-                        count += 1   
+            count += child.all_progressbar(User)
+        count += self.progressbar(User)
         return count
     
     def __unicode__(self):
@@ -42,13 +41,13 @@ class Category(models.Model):
             return "%s" % (self.name)
 
 class Achievement(models.Model):
-    name = models.CharField(_("Name"), max_length=255)
-    description = models.TextField(_("Description"))
+    name = models.CharField(_("Name"), max_length=25)
+    description = models.TextField(_("Description"), validators=[MaxLengthValidator(60)])
     points = models.IntegerField(blank=False, default=0)
     icon = FileBrowseField(_("Icon"), directory='icons/', format='image', max_length=255, blank=True)
     category = models.ForeignKey(Category, related_name="achievements")
     users = models.ManyToManyField(User, related_name="user_achievements", blank=True)
-    
+
     def __unicode__(self):
         return self.name
     
