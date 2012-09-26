@@ -1,10 +1,12 @@
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from models import Category, Achievement, Trophies
 import settings
 
+@login_required(login_url='/admin')
 def Overview(request):
     category_list = Category.objects.filter(parent_category__isnull=True)
     all_categories = Category.objects.all()
