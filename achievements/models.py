@@ -30,8 +30,10 @@ class Category(models.Model):
     def all_progressbar(self, User):
         count = 0
         for child in self.child_categories.all():
-            count += child.all_progressbar(User)
-        count += self.progressbar(User)
+            for ach in child.achievements.all():
+                for user in ach.users.all():
+                    if user.username != User:
+                        count += 1
         return count
     
     def __unicode__(self):
