@@ -1,19 +1,44 @@
 {% load staticfiles %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/navigation_style.css"/>
+<script type="text/javascript" src="{{ STATIC_URL }}js/listCollapse.js"></script>
+<!--<script type="text/javascript">
+    window.onload = function () {
+        compactMenu('Test',true,'&gt;&gt; ');
+        selfLink('Test','selfhighlight',true);
+    }
+</script>-->
 
 <div class="navi_content">
-    <ul>
-        {% for category in category_list %}
-        <li>
-            {% if category.parent_category == None %}
-                <a href="{% url achievements:overview %}"><b>{{ category.name }}</b></a>
-            {% else %}
-                <a href="{% url achievements:category category_id=category.id %}"><b>{{ category.name }}</b></a>
-            {% endif %}
-            {% if category.child_categories.all.count > 0 %}
-                {% include "achievements/category_include.html" with category=category template="achievements/category_include.html" %}
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+    {% for category in category_list %}
+        {% include "achievements/category_include.html" with category=category template="achievements/category_include.html" %}
+    {% endfor %}
 </div>
+
+
+
+<!--
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a  id="bla" class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+            Collapsible Group Item #1
+            </a>
+        </div>
+        <div id="collapseOne" class="accordion-body collapse in">
+            <div class="accordion-inner">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#bla" href="#collapseTwo">
+                        Collapsible Group Item #2
+                        </a>
+                    </div>
+                    <div id="collapseTwo" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                        Anim pariatur cliche...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->
