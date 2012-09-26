@@ -1,10 +1,34 @@
-<ul>
-    {% for child in category.child_categories.all %}
+{% if category.parent_category.name == None%}
+    <ul>
         <li>
-            <a href="{% url achievements:category category_id=child.id %}">{{ child.name }}</a>
+            <a class="btn" href="{% url achievements:overview %}">
+                <b>{{ category.name }}</b>
+            </a>
+        </li>
+    </ul>
+    {% if category.child_categories.all.count > 0 %}
+        <ul>
+        {% for child in category.child_categories.all %}
+            <li>
+            <a class="btn" href="{% url achievements:category category_id=child.id %}"><b>{{ child.name }}</b></a>
             {% if child.child_categories.all.count > 0 %}
                 {% include template with category=child %}
             {% endif %}
-        </li>
-    {% endfor %}
-</ul>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% else %}
+    {% if category.child_categories.all.count > 0 %}
+        <ul>
+        {% for child in category.child_categories.all %}
+            <li>
+            <a class="btn" href="{% url achievements:category category_id=child.id %}"><b>{{ child.name }}</b></a>
+            {% if child.child_categories.all.count > 0 %}
+                {% include template with category=child %}
+            {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endif %}
