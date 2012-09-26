@@ -1,85 +1,120 @@
 {% load staticfiles %}
-{% include "achievements/navigation.html" %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.8.2.js"></script>
 <link rel="stylesheet" href="{{ STATIC_URL }}css/category_style.css"/>
+<link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css"/>
+<script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript">
+function popup (url) {
+ fenster = window.open(url, "Popupfenster", "width=900,height=500,resizable=yes");
+ fenster.focus();
+ return false;
+}
+</script>
 
-<div class="content">
-    {% for category in all_categories %}
-        {% if category.id|stringformat:"s" == categoryID %}
-            {% if category.parent_category > 0 %}
-                <h1>{{ category.parent_category }} - {{ category.name }}</h1>
-            {% else %}
-                <h1>{{ category.name }}</h1>
-            {% endif %}
-            {% if category.child_categories.all.count > 0 %}
-                <div class="overview">
-                    <p><b>Summary of Achievements earned</b></p>
-                    <p>{{ all_bar }} / {{ category.count_all_achievements }}</p>
-                </div>
-                {% for child in category.child_categories.all %}
-                    <div class="child">
-                        <p><b>{{ child.name }}</b></p>
-                        <p>{{ cycle }}</p>
-                        <p>Here's the progress bar for {{ child.name }}</p>
-                        {% with count=forloop.counter0 %}
-						{{ count }}
-						<p>{{ child_progress.count }} / {{ child.count_achievements }}</p>
-						{% endwith %}
-                        <a href="{% url achievements:category category_id=child.id %}">show Achievements</a>
-                    </div>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span2">
+            {% include "achievements/navigation.html" %}
+        </div>
+        <div class="span9">
+            <div class="content">
+                {% for category in all_categories %}
+                    {% if category.id|stringformat:"s" == categoryID %}
+                        {% if category.parent_category > 0 %}
+                            <h1>{{ category.parent_category }} - {{ category.name }}</h1>
+                        {% else %}
+                            <h1>{{ category.name }}</h1>
+                        {% endif %}
+                        {% if category.child_categories.all.count > 0 %}
+                            <div class="overview">
+                                <p><b>Summary of Achievements earned</b></p>
+                                <div class="progress_bar">
+                                    <div class="progress progress-danger">
+                                        <div class="bar" style="width: {{ all_percent }}%"></div>
+                                    </div>
+                                    <div class="percent">
+                                        <p>{{ all_bar }} / {{ category.count_all_achievements }}  ({{ all_percent }}%)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% for child in category.child_categories.all %}
+                                <div class="category-child">
+                                    <p><b>{{ child.name }}</b></p>
+                                    <div class="child_progress_bar">
+                                        <div class="progress progress-danger">
+                                            <div class="bar" style="width: {{ all_percent }}%"></div>
+                                        </div>
+                                        <div class="child_percent">
+                                            <p>{{ child_progress.0 }} / {{ child.count_all_achievements }}</p>
+                                        </div>
+                                    </div>
+                                    <a class="btn" href="{% url achievements:category category_id=child.id %}">show Achievements</a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="overview">
+                                <p><b>Summary of Achievements earned</b></p>
+                                <div class="progress_bar">
+                                    <div class="progress progress-danger">
+                                        <div class="bar" style="width: {{ pro_percent }}%"></div>
+                                    </div>
+                                    <div class="percent">
+                                        <p>{{ progress }} / {{ category.count_achievements }}  ({{ pro_percent }}%)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p><b>Achievements:</b></p>
+                            <div class="well well-small">
+                            <div class="achievement-menu">
+                                {% if achievement_list %}
+                                    {% for achievement in achievement_list %}
+                                        {% if achievement in achievements_accomplished %}
+                                            <div class="achievements">
+                                                <div class="icon">
+                                                    <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" />
+                                                </div>
+                                                <div class="achievement-content">
+                                                    {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+                                                </div>
+                                                <div class="trophy">
+                                                    <button type="button" onclick="">
+                                                        <img src="{{ MEDIA_URL }}uploads/icons/trophy.png" alt="Trophy" />
+                                                    </button>
+                                                </div>
+                                                <div class="points">
+                                                    <p>{{ achievement.points }}</p>
+                                                    <p>XP</p>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for achievement in achievement_list %}
+                                        {% if not achievement in achievements_accomplished %}
+                                            <div class="grey_achievements">
+                                                <div class="icon">
+                                                    <img src="{{ MEDIA_URL }}uploads/icons/standard.png" alt="Standard" />
+                                                </div>
+                                                <div class="achievement-content">
+                                                    {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+                                                </div>
+                                                <div class="trophy">
+                                                </div>
+                                                <div class="points">
+                                                    <p>{{ achievement.points }}</p>
+                                                    <p>XP</p>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No Achievements!</p>
+                                {% endif %}
+                            </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
                 {% endfor %}
-            {% else %}
-                {% if achievement_list %}
-                    <div class="overview">
-                        <p><b>Summary of Achievements earned</b></p>
-                        <p>Here's the progress bar for {{ category.name }}</p>
-                        <p>{{ progress }} / {{ category.count_achievements }}</p>
-                    </div>
-                    <p><b>Achievements:</b></p>
-                    <div class="achievement-menu">
-                        {% for achievement in achievement_list %}
-                            {% if achievement in achievements_accomplished %}
-                                <div class="achievements">
-                                    <div class="icon">
-                                        <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" />
-                                    </div>
-                                    <div class="achievement-content">
-                                        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
-                                    </div>
-                                    <div class="trophy">
-                                        <button type="button" onclick="">
-                                            <img src="{{ MEDIA_URL }}uploads/icons/trophy.png" alt="Trophy" />
-                                        </button>
-                                    </div>
-                                    <div class="points">
-                                        <p>{{ achievement.points }}</p>
-                                        <p>XP</p>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                        {% for achievement in achievement_list %}
-                            {% if not achievement in achievements_accomplished %}
-                                <div class="grey_achievements">
-                                    <div class="icon">
-                                        <img src="{{ MEDIA_URL }}uploads/icons/standard.png" alt="Standard" />
-                                    </div>
-                                    <div class="achievement-content">
-                                        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
-                                    </div>
-                                    <div class="trophy">
-                                    </div>
-                                    <div class="points">
-                                        <p>{{ achievement.points }}</p>
-                                        <p>XP</p>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p>No Achievements!</p>
-                {% endif %}
-            {% endif %}
-        {% endif %}
-    {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
