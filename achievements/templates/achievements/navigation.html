@@ -9,6 +9,13 @@
 </script>-->
 
 <div class="navi_content">
+	<ul>
+		<li>
+			<a href="{% url achievements:overview %}">
+		        <b>Overview</b>
+		    </a>
+		</li>
+	</ul>
     {% for category in category_list %}
         {% include "achievements/category_include.html" with category=category template="achievements/category_include.html" %}
     {% endfor %}
