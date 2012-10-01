@@ -19,13 +19,8 @@ class Category(models.Model):
         count += self.achievements.all().count()
         return count
     
-    def progressbar(self, User):
-        count = 0
-        for ach in self.achievements.all():
-            for user in ach.users.all():
-                if user.username != User:
-                    count += 1
-        return count
+    def progressbar(self, user):
+        return self.achievements.filter(users=user).count()
     
     def all_progressbar(self, User):
         count = 0
@@ -33,6 +28,12 @@ class Category(models.Model):
             count += child.all_progressbar(User)
         count += self.progressbar(User)
         return count
+    
+    def is_ancestor(self, category_old):
+        if self.parent_category == category_old:
+            return True
+        else:
+            return False
     
     def __unicode__(self):
         if (self.parent_category != None):
