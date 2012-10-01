@@ -3,6 +3,10 @@
 <link rel="stylesheet" href="{{ STATIC_URL }}css/index_style.css"/>
 <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css"/>
 <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/storage.js"></script>
+<script type="text/javascript">
+	var liste = storage.getAll();
+</script>
 
 <div class="container-fluid">
     <div class="row-fluid">
@@ -11,14 +15,21 @@
         </div>
         <div class="span9">
             <div class="content">
-                {% for category in category_list %}
-                    <h1>{{ category.name }}</h1>
+                    <h1>Overview</h1>
                     <p><b>Trophies</b></p>
                     <div class="well">
                         <div class="trophy-menu">
                             {% for trophy in trophies_list %}
                                 <div id="trophy">
                                     <div class="trophy-icon">
+                                    	<script type="text/javascript">
+											for (var eigenschaft in liste) {
+												document.write(
+													"<tr><td>" + eigenschaft + "</td>" +
+													"<td><code>" + liste[eigenschaft] + "</code></td></tr>"
+												);
+											}
+										</script>
                 						{% if trophy.icon != None %}
                 							<img src="{{ trophy.icon.url }}" alt="{{ trophy }}" title="{{ trophy.category }} - {{ trophy }}" />
                 						{% else %}
@@ -49,7 +60,6 @@
                         </div>
                     </div>
                     <div class="overview">
-                        {% if category.child_categories.all.count > 0 %}
                             <div class="overview">
                                 <p><b>Summary of Achievements earned</b></p>
                                 <div class="progress_bar">
@@ -57,27 +67,25 @@
                                         <div class="bar" style="width: {{ all_percent }}%"></div>
                                     </div>
                                     <div class="percent">
-                                        <p>{{ all_bar }} / {{ category.count_all_achievements }}  ({{ all_percent }}%)</p>
+                                        <p>{{ achievements_count }} / {{ all_achievements_count }}  ({{ all_percent }}%)</p>
                                     </div>
                                 </div>
                             </div>
-                            {% for child in category.child_categories.all %}
+                            {% for category in category_list %}
                                 <div class="category-child">
-                                    <p><b>{{ child.name }}</b></p>
+                                    <p><b>{{ category.name }}</b></p>
                                     <div class="child_progress_bar">
                                         <div class="progress progress-danger">
-                                            <div class="bar" style="width: {{ all_percent }}%"></div>
+                                            <div class="bar" style="width: {{ all_cat_percent }}%"></div>
                                         </div>
                                         <div class="child_percent">
-                                            <p>{{ all_child_bar }} / {{ child.count_all_achievements }}</p>
+                                            <p>{{ all_bar }} / {{ category.count_all_achievements }} ({{ all_cat_percent }}%)</p>
                                         </div>
                                     </div>
-                                    <a class="btn" href="{% url achievements:category category_id=child.id %}">show Achievements</a>
+                                    <a class="btn" href="{% url achievements:category category_id=category.id %}">show Achievements</a>
                                 </div>
                             {% endfor %}
-                        {% endif %}
                     </div>
-                {% endfor %}
             </div>
         </div>
     </div>
