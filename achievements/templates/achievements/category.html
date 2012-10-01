@@ -3,11 +3,14 @@
 <link rel="stylesheet" href="{{ STATIC_URL }}css/category_style.css"/>
 <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css"/>
 <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/storage.js"></script>
 <script type="text/javascript">
-function popup (url) {
- fenster = window.open(url, "Popupfenster", "width=900,height=500,resizable=yes");
- fenster.focus();
- return false;
+	$('.nav-tabs').button()
+</script>
+<script type="text/javascript">
+function setPosition(){
+	storage.set("position", document.forms.chooseForm.elements["position"].innerHTML);
+	location.href = "index.html";
 }
 </script>
 
@@ -77,10 +80,31 @@ function popup (url) {
                                                     {% autoescape off %}{{ achievement.render }}{% endautoescape %}
                                                 </div>
                                                 <div class="trophy">
-                                                    <button type="button" onclick="">
+                                                    <button class="btn btn-small" role="button" data-toggle="modal" href="#trophy-modal">
                                                         <img src="{{ MEDIA_URL }}uploads/icons/trophy.png" alt="Trophy" />
                                                     </button>
                                                 </div>
+                                                <div class="modal hide fade in" id="trophy-modal" tabindex="-1" role="dialog" aria-labelledby="blaLabel" aria-hidden="true">
+			                                        <div class="modal-header">
+			                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			                                            <h3 id="myModalLabel">Choose a position for your Trophy</h3>
+			                                        </div>
+			                                        <form name="chooseForm" onsubmit="return setPosition();return false;">
+			                                        <div class="modal-body">
+			                                            <div class="content">
+			                                            	<div class="btn-group" data-toggle="buttons-radio">
+			                                            	{% for pos in trophies_list %}
+		                                                		<button id="position" type="button" class="btn">{{forloop.counter}}</button>
+			                                                {% endfor %}
+			                                                </div>
+			                                            </div>
+			                                        </div>
+			                                        <div class="modal-footer">
+			                                            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			                                            <button class="btn btn-primary" type="submit">Save changes</button>
+			                                        </div>
+			                                        </form>
+			                                    </div>
                                                 <div class="points">
                                                     <p>{{ achievement.points }}</p>
                                                     <p>XP</p>
