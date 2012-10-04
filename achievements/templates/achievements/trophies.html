@@ -1,0 +1,26 @@
+<div class="modal hide fade" id="trophyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Choose an Achievement</h3>
+	</div>
+	<div class="modal-body">
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>
+<ul class="thumbnails">
+    {% for trophy in trophies %}
+    <li class="span2">
+        {% if trophy == null %}
+        <a class="thumbnail" rel="popover" data-toggle="modal" href="{% url achievements:trophy_modal trophy_pos=forloop.counter0 %}" data-target="#trophyModal" data-content="Click to set trophy" data-original-title="Empty" data-placement="bottom">
+            <div class="empty_trophy"><i class="icon-search"></i></div>
+        </a>
+        {% else %}
+        <a class="thumbnail" rel="popover" data-toggle="modal" href="{% url achievements:trophy_modal trophy_pos=forloop.counter0 %}" data-target="#trophyModal" data-content="{{trophy.achievement.description}}" data-original-title="{{trophy.achievement.name}}" data-placement="bottom">
+            <img src="{{ trophy.achievement.icon.url }}" alt="{{ trophy }}">
+        </a>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
