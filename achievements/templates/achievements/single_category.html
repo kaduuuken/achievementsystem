@@ -1,0 +1,13 @@
+<div class="category-child">
+    <p><b>{{ category.name }}</b></p>
+    <div class="child_progress_bar">
+        <div class="progress">
+            <div class="bar" style="width: {{ percentage }}%"></div>
+        </div>
+        <div class="child_percent">
+            <p>{{ completed_achievements  }} / {{ category.count_all_achievements }} ({{ percentage }}%)</p>
+        </div>
+    </div>
+    <a class="btn" href="{% url achievements:category category_id=category.id %}">show Details</a>
+</div>
+
