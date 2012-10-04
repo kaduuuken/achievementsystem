@@ -6,7 +6,6 @@ import settings
 
 urlpatterns = patterns('',
     url(r'^achievements/', include('achievements.urls', namespace='achievements')),
-    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/filebrowser/', include(site.urls)),
     url(r'^admin/', include(admin.site.urls)),
     (r'^admin/jsi18n', 'django.views.i18n.javascript_catalog'),
