@@ -1,0 +1,7 @@
+{% for position in positions %}
+	<a href="{% url achievements:trophy achievement_id=achievement.id trophy_slot=forloop.counter0 %}">
+		<div class="well" style="float: left; margin: 10px">
+			<p><b>{{forloop.counter}}</b></p>
+		</div>
+	</a>
+{% endfor %}
