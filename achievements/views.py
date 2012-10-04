@@ -24,6 +24,14 @@ def Overview(request):
                                'all_achievements': all_achievements},
                               context_instance=RequestContext(request))
 
+def PositionModalView(request, achievement_id):
+    achievement = Achievement.objects.get(id=achievement_id)
+    positions = [None] * settings.TROPHY_COUNT
+    return render_to_response('achievements/position_remote.html',
+                              {'positions': positions,
+                               'achievement': achievement},
+                              context_instance=RequestContext(request))
+
 def TrophyModalView(request, trophy_pos):
     complete_achievements_list = Achievement.objects.filter(users=request.user)
     trophies = Trophy.objects.filter(user=request.user)
