@@ -1,3 +1,4 @@
 from django.conf import settings
 
-SET_PARAMETER = getattr(settings, 'ACHIEVEMENT_SET_PARAMETER', 4)
+# Defines the number of available trophy slots
+TROPHY_COUNT = getattr(settings, 'ACHIEVEMENT_TROPHY_COUNT', 5)
