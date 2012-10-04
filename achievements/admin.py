@@ -1,4 +1,4 @@
-from models import Achievement, Category, Trophies#, CollectionAchievement, Progress, ProgressAchievement, Task, TaskAchievement, TaskProgress, UserAchievement
+from models import Achievement, Category, Trophy#, CollectionAchievement, Progress, ProgressAchievement, Task, TaskAchievement, TaskProgress, UserAchievement
 from django.contrib import admin
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db import models
@@ -48,6 +48,6 @@ admin.site.register(Category, CategoryAdmin)
 #admin.site.register(TaskAchievement, TaskAchievementAdmin)
 #admin.site.register(Task, TaskAdmin)
 #admin.site.register(TaskProgress, TaskProgressAdmin)
-admin.site.register(Trophies, TrophiesAdmin)
+admin.site.register(Trophy, TrophiesAdmin)
 #admin.site.register(UserAchievement)
 #admin.site.register(CollectionAchievement, CollectionAchievementAdmin)
