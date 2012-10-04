@@ -17,7 +17,22 @@ class Category(models.Model):
         for cat in self.child_categories.all():
             count += cat.count_all_achievements()
         return count
+    
+    def count_complete_achievements(self, user):
+        return self.achievements.filter(users=user).count()
+    
+    def count_all_complete_achievements(self, user):
+        count = self.count_complete_achievements(user)
+        for child in self.child_categories.all():
+            count += child.count_all_complete_achievements(user)
+        return count
 
+    def get_complete_percentage(self, user):
+        all = float(self.count_all_achievements())
+        if all == 0:
+            return 0
+        return int(self.count_all_complete_achievements(user)/all*100)
+    
     def __unicode__(self):
         if (self.parent_category != None):
             return "%s - %s" % (self.parent_category, self.name)
