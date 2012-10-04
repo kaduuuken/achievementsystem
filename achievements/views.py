@@ -24,6 +24,17 @@ def Overview(request):
                                'all_achievements': all_achievements},
                               context_instance=RequestContext(request))
 
+def TrophyView(request, achievement_id, trophy_slot):
+    achievement = Achievement.objects.get(id=achievement_id)
+    try:
+        current_trophy = Trophy.objects.get(user=request.user, position=trophy_slot)
+    except:
+        Trophy.objects.create(achievement=achievement, user=request.user, position=trophy_slot)
+    else:
+        Trophy.objects.filter(user=request.user, position=trophy_slot).update(achievement=achievement)
+    current_trophy = Trophy.objects.get(user=request.user, position=trophy_slot)
+    return redirect('/achievements/')
+
 def CategoryView(request, category_id):
     category = Category.objects.get(id=category_id)
     category_list = Category.objects.filter(parent_category=category)
