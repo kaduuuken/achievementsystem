@@ -1,0 +1,16 @@
+    <li{% if category == current_category %} class="active"{% endif %}>
+        <a href="{% url achievements:category category_id=category.id %}">
+            {{ category.name }}
+        </a>  
+    </li>
+    {% if category.child_categories.all.count > 0 %}
+	    {% if category == current_category or category == current_category.parent_category %}
+	    <li>
+	        <ul class="nav nav-list">
+	        {% for child in category.child_categories.all %}
+	        {% include template with category=child %}
+	        {% endfor %}
+	        </ul>
+	    </li>
+	    {% endif %}
+    {% endif %}
