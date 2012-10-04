@@ -1,51 +1,15 @@
-{% load staticfiles %}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/navigation_style.css"/>
-<script type="text/javascript" src="{{ STATIC_URL }}js/listCollapse.js"></script>
-<!--<script type="text/javascript">
-    window.onload = function () {
-        compactMenu('Test',true,'&gt;&gt; ');
-        selfLink('Test','selfhighlight',true);
-    }
-</script>-->
-
-<div class="navi_content">
-	<ul>
-		<li>
-			<a href="{% url achievements:overview %}">
-		        <b>Overview</b>
-		    </a>
-		</li>
-	</ul>
-    {% for category in category_list %}
-        {% include "achievements/category_include.html" with category=category template="achievements/category_include.html" %}
-    {% endfor %}
+<div class="well" style="padding: 8px 0;">
+    <ul class="nav nav-list">
+        <li class="nav-header">
+            <a href="{% url achievements:overview %}">
+                <b>Overview</b>
+            </a>  
+        </li>
+        {% for category in categories %}
+        <li class="divider"></li>
+        <li>
+        {% include "achievements/navigation_include.html" with category=category template="achievements/navigation_include.html" %}
+        </li>
+        {% endfor %}
+    </ul>
 </div>
-
-
-
-<!--
-<div class="accordion" id="accordion2">
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a  id="bla" class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-            Collapsible Group Item #1
-            </a>
-        </div>
-        <div id="collapseOne" class="accordion-body collapse in">
-            <div class="accordion-inner">
-                <div class="accordion-group">
-                    <div class="accordion-heading">
-                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#bla" href="#collapseTwo">
-                        Collapsible Group Item #2
-                        </a>
-                    </div>
-                    <div id="collapseTwo" class="accordion-body collapse">
-                        <div class="accordion-inner">
-                        Anim pariatur cliche...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>-->
