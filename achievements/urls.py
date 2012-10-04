@@ -6,6 +6,7 @@ from views import Overview
 urlpatterns = patterns('achievements.views',
     url(r'^$', 'Overview', name='overview'),
     url(r'^(?P<category_id>\d+)/$', 'CategoryView', name='category'),
+    url(r'^position_remote/(?P<achievement_id>\d+)/$', 'PositionModalView', name='position_modal'),
     url(r'^trophy_remote/(?P<trophy_pos>\d+)/$', 'TrophyModalView', name='trophy_modal'),
     url(r'^(?P<trophy_slot>\d+)/(?P<achievement_id>\d+)/$', 'TrophyView', name='trophy'),
 )
