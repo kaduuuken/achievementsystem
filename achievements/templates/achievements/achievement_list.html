@@ -1,0 +1,56 @@
+<div class="modal hide fade" id="positionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Choose a position</h3>
+	</div>
+	<div class="modal-body">
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>
+{% for achievement in achievement_list %}
+	{% if achievement in achievements_accomplished %}
+	<div class="well{% if achievement not in achievements_accomplished %} muted{% endif %}">
+	    <div class="pull-left">
+	        <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" />
+	    </div>
+	    <div class="pull-left" style="padding-left:30px;">
+	        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+	    </div>
+	    <div class="pull-right">
+	        <p>{{ achievement.points }} XP</p>
+	        {% if achievement in achievements_accomplished and achievement in trophies %}
+	        	<a class="thumbnail" rel="popover" data-content="This achievement is already a trophy" data-original-title="Trophy" data-placement="bottom">
+		            <img src="{{ MEDIA_URL }}uploads/icons/trophy_grey.png" alt="Trophy" />
+		        </a>
+	        {% else %}
+		        <a class="thumbnail" rel="popover" data-toggle="modal" href="{% url achievements:position_modal achievement_id=achievement.id %}" data-target="#positionModal" data-content="Click to set this achievement as trophy" data-original-title="Trophy" data-placement="bottom">
+		            <img src="{{ MEDIA_URL }}uploads/icons/trophy.png" alt="Trophy" />
+		        </a>
+	        {% endif%}
+	    </div>
+	    <div class="clearfix"></div>
+	</div>
+	{% endif %}
+{% endfor %}
+{% for achievement in achievement_list %}
+	{% if not achievement in achievements_accomplished %}
+	<div class="well{% if achievement not in achievements_accomplished %} muted{% endif %}">
+	    <div class="pull-left">
+	        <img src="{{ MEDIA_URL }}uploads/icons/standard.png" alt="Standard" />
+	    </div>
+	    <div class="pull-left" style="padding-left:30px;">
+	        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+	    </div>
+	    <div class="pull-right">
+	        <p>{{ achievement.points }} XP</p>
+	    </div>
+	    <div class="clearfix"></div>
+	</div>
+	{% endif %}
+{% endfor %}
+{% if not achievement_list %}
+<p>No Achievements!</p>
+{% endif %}
+
