@@ -4,6 +4,7 @@ from django.contrib import admin
 admin.autodiscover()
 import settings
 
+
 urlpatterns = patterns('',
     url(r'^achievements/', include('achievements.urls', namespace='achievements')),
     url(r'^admin/filebrowser/', include(site.urls)),
