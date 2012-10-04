@@ -13,28 +13,11 @@ class Category(models.Model):
         return self.achievements.all().count()
     
     def count_all_achievements(self):
-        count = 0
+        count = self.achievements.all().count()
         for cat in self.child_categories.all():
             count += cat.count_all_achievements()
-        count += self.achievements.all().count()
         return count
-    
-    def progressbar(self, user):
-        return self.achievements.filter(users=user).count()
-    
-    def all_progressbar(self, User):
-        count = 0
-        for child in self.child_categories.all():
-            count += child.all_progressbar(User)
-        count += self.progressbar(User)
-        return count
-    
-    def is_ancestor(self, category_old):
-        if self.parent_category == category_old:
-            return True
-        else:
-            return False
-    
+
     def __unicode__(self):
         if (self.parent_category != None):
             return "%s - %s" % (self.parent_category, self.name)
@@ -64,7 +47,7 @@ class Achievement(models.Model):
         output = "<p><b>%s</b></p><p>%s</p>" % (self.name, self.description)
         return output
 
-class Trophies(models.Model):
+class Trophy(models.Model):
     achievement = models.ForeignKey(Achievement, blank=True, related_name="trophy")
     user = models.ForeignKey(User)
     position = models.PositiveIntegerField(validators=[validate.validate_max])
