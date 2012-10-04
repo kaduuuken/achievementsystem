@@ -24,6 +24,18 @@ def Overview(request):
                                'all_achievements': all_achievements},
                               context_instance=RequestContext(request))
 
+def TrophyModalView(request, trophy_pos):
+    complete_achievements_list = Achievement.objects.filter(users=request.user)
+    trophies = Trophy.objects.filter(user=request.user)
+    trophy_achievements = []
+    for trophy in trophies:
+        trophy_achievements.append(trophy.achievement)
+    return render_to_response('achievements/trophy_remote.html', 
+                              {'trophy_pos': trophy_pos,
+                               'complete_achievements_list': complete_achievements_list,
+                               'trophies': trophy_achievements}, 
+                              context_instance=RequestContext(request))
+
 def TrophyView(request, achievement_id, trophy_slot):
     achievement = Achievement.objects.get(id=achievement_id)
     try:
