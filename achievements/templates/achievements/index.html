@@ -1,92 +1,28 @@
-{% load staticfiles %}
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.8.2.js"></script>
-<link rel="stylesheet" href="{{ STATIC_URL }}css/index_style.css"/>
-<link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css"/>
-<script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/storage.js"></script>
-<script type="text/javascript">
-	var liste = storage.getAll();
-</script>
+{% extends "achievements/base.html" %}
+{% load achievement_tags %}
 
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span2">
-            {% include "achievements/navigation.html" %}
-        </div>
-        <div class="span9">
-            <div class="content">
-                    <h1>Overview</h1>
-                    <p><b>Trophies</b></p>
-                    <div class="well">
-                        <div class="trophy-menu">
-                            {% for trophy in trophies_list %}
-                                <div id="trophy">
-                                    <div class="trophy-icon">
-                                    	<script type="text/javascript">
-											for (var eigenschaft in liste) {
-												document.write(
-													"<tr><td>" + eigenschaft + "</td>" +
-													"<td><code>" + liste[eigenschaft] + "</code></td></tr>"
-												);
-											}
-										</script>
-                						{% if trophy.icon != None %}
-                							<img src="{{ trophy.icon.url }}" alt="{{ trophy }}" title="{{ trophy.category }} - {{ trophy }}" />
-                						{% else %}
-                							<img src="{{ MEDIA_URL}}uploads/icons/x.png" alt="Empty" />
-                						{% endif %}
-                					</div>
-                                    <div id="button">
-                                        <button class="btn btn-small" role="button" data-toggle="modal" href="#trophy-modal">Customize</button>
-                                    </div>
-                                    <div class="modal hide fade in" id="trophy-modal" tabindex="-1" role="dialog" aria-labelledby="blaLabel" aria-hidden="true">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                            <h3 id="myModalLabel">Choose a Trophy</h3>
-                                        </div>
-                                        <div class="modal-body">
-                                            {% include "achievements/trophy_navigation.html" %}
-                                            <div class="content">
-                                                <h6>Please select an achievement in one of the subcategories!</h6>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                                            <button class="btn btn-primary">Save changes</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="overview">
-                            <div class="overview">
-                                <p><b>Summary of Achievements earned</b></p>
-                                <div class="progress_bar">
-                                    <div class="progress progress-danger">
-                                        <div class="bar" style="width: {{ all_percent }}%"></div>
-                                    </div>
-                                    <div class="percent">
-                                        <p>{{ achievements_count }} / {{ all_achievements_count }}  ({{ all_percent }}%)</p>
-                                    </div>
-                                </div>
-                            </div>
-                            {% for category in category_list %}
-                                <div class="category-child">
-                                    <p><b>{{ category.name }}</b></p>
-                                    <div class="child_progress_bar">
-                                        <div class="progress progress-danger">
-                                            <div class="bar" style="width: {{ all_cat_percent }}%"></div>
-                                        </div>
-                                        <div class="child_percent">
-                                            <p>{{ all_bar }} / {{ category.count_all_achievements }} ({{ all_cat_percent }}%)</p>
-                                        </div>
-                                    </div>
-                                    <a class="btn" href="{% url achievements:category category_id=category.id %}">show Achievements</a>
-                                </div>
-                            {% endfor %}
-                    </div>
+{% block extra_headers %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/index_style.css"/>
+{% endblock %}
+
+{% block content %}
+<h1>{% if category %}{{ category.name }}{% else%}Overview{% endif %}</h1>
+<h2>Trophies</h2>
+{% render_trophies user %}
+<div class="overview">
+    <div class="overview">
+        <p><b>Summary of Achievements earned</b></p>
+        <div class="progress_bar">
+            <div class="progress">
+                <div class="bar" style="width: {{ complete_percentage }}%"></div>
+            </div>
+            <div class="percent">
+                <p>{{ achievements_complete }} / {{ all_achievements }}  ({{ complete_percentage }}%)</p>
             </div>
         </div>
     </div>
+    {% for category in category_list %}
+    {% render_category category user %}
+    {% endfor %}
 </div>
+{% endblock %}
