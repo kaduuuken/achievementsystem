@@ -16,7 +16,11 @@
 	        <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" />
 	    </div>
 	    <div class="pull-left" style="padding-left:30px;">
-	        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+	        <p><b>{{ achievement.name }}</b></p>
+	        <p>{{ achievement.description }}</p>
+            {% if achievement.get_subclass %}
+	           {% autoescape off %}{{ achievement.get_subclass }}{% endautoescape %}
+            {% endif %}
 	    </div>
 	    <div class="pull-right">
 	        <p>{{ achievement.points }} XP</p>
@@ -41,7 +45,11 @@
 	        <img src="{{ MEDIA_URL }}uploads/icons/standard.png" alt="Standard" />
 	    </div>
 	    <div class="pull-left" style="padding-left:30px;">
-	        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+	        <p><b>{{ achievement.name }}</b></p>
+            <p>{{ achievement.description }}</p>
+            {% if achievement.get_subclass %}
+               {% autoescape off %}{{ achievement.get_subclass }}{% endautoescape %}
+            {% endif %}
 	    </div>
 	    <div class="pull-right">
 	        <p>{{ achievement.points }} XP</p>
