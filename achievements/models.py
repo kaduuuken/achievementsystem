@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from filebrowser.fields import FileBrowseField
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxLengthValidator
+from django.template import Template, Context
 import validate
 
 class Category(models.Model):
@@ -50,17 +51,68 @@ class Achievement(models.Model):
     def __unicode__(self):
         return self.name
     
-    #def get_subclass(self):
-        #if hasattr(self, 'progressachievement'):
-            #return self.progressachievement
-        #if hasattr(self, 'taskachievement'):
-            #return self.taskachievement
-        #if hasattr(self, 'collectionachievement'):
-            #return self.collectionachievement
+    def get_subclass(self):
+        if hasattr(self, 'progressachievement'):
+            return self.progressachievement.render()
+        if hasattr(self, 'taskachievement'):
+            return self.taskachievement.render()
+        if hasattr(self, 'collectionachievement'):
+            return self.collectionachievement.render()
+
+class ProgressAchievement(Achievement):
+    required_amount = models.PositiveIntegerField()
+    user = models.ManyToManyField(User, related_name="progress_achievements", through="Progress")
     
     def render(self):
-        output = "<p><b>%s</b></p><p>%s</p>" % (self.name, self.description)
-        return output
+        output = Template( "<p>{{ required_amount }}</p><p>{{ achieved_amount }}</p>")
+        c = Context({"required_amount": self.required_amount})
+        return output.render(c)
+
+class Progress(models.Model):
+    user = models.ForeignKey(User)
+    progress_achievement = models.ForeignKey(ProgressAchievement, related_name="amount_progress")
+    achieved_amount = models.PositiveIntegerField()
+
+class Task(models.Model):
+    name = models.CharField(_("Name"), max_length=255)
+    description = models.TextField(_("Description"))
+    
+    def __unicode__(self):
+        return self.name
+
+class TaskAchievement(Achievement):
+    tasks = models.ManyToManyField(Task)
+    user = models.ManyToManyField(User, related_name="task_achievements", through="TaskProgress")
+    
+    def render(self):
+        completed_task_list = []
+        for task in self.task_progress.filter(user=self.user.all()):
+            for complete in task.completed_tasks.all():
+                completed_task_list.append(complete)
+        task_list = self.tasks.all()
+        task_names = []
+        for task in task_list:
+            task_names.append(task)
+        output = Template("{% for task in task_names %}<p style='float: left; padding: 5px;{% if not task in completed_task_list %} color: #990000{% endif %}'>{{ task.name }}</p>{% endfor %}")
+        c = Context({"task_names": task_names, "completed_task_list": completed_task_list})
+        return output.render(c)
+
+class TaskProgress(models.Model):
+    user = models.ForeignKey(User)
+    task_achievement = models.ForeignKey(TaskAchievement, related_name="task_progress")
+    completed_tasks = models.ManyToManyField(Task, limit_choices_to={})
+    
+    def __unicode__(self):
+        return self.task_achievement.name
+
+class CollectionAchievement(Achievement):
+    achievements = models.ManyToManyField(Achievement, related_name="collection_achievements")
+    
+    def render(self):
+        print self.achievements.all()
+        output = Template("{% for ach in achievements %}<p>{{ach.name}}</p>{% endfor %}")
+        c = Context({"achievements": self.achievements})
+        return output.render(c)
 
 class Trophy(models.Model):
     achievement = models.ForeignKey(Achievement, blank=True, related_name="trophy")
