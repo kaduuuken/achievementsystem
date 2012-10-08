@@ -56,6 +56,7 @@ def TrophyView(request, achievement_id, trophy_slot):
     return redirect('/achievements/')
 
 def CategoryView(request, category_id):
+    user = request.user
     category = Category.objects.get(id=category_id)
     category_list = Category.objects.filter(parent_category=category)
     achievements_complete = category.count_all_complete_achievements(request.user)
@@ -71,7 +72,8 @@ def CategoryView(request, category_id):
     for trophy in trophies:
         trophy_achievements.append(trophy.achievement)
     return render_to_response('achievements/category.html',
-                              {'category': category,
+                              {'user': user,
+                               'category': category,
                                'category_list': category_list,
                                'complete_percentage': complete_percentage, 
                                'achievements_complete': achievements_complete,
