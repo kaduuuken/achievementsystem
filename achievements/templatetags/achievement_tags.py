@@ -27,3 +27,12 @@ def render_trophies(user, takes_context=True):
     for trophy in Trophy.objects.filter(user=user):
         trophies[trophy.position] = trophy
     return {'trophies': trophies}
+
+@register.simple_tag
+def render_subachievement(user, achievement):
+    if hasattr(achievement, 'progressachievement'):
+        return achievement.progressachievement.render(user)
+    if hasattr(achievement, 'taskachievement'):
+        return achievement.taskachievement.render(user)
+    if hasattr(achievement, 'collectionachievement'):
+        return achievement.collectionachievement.render(user)
