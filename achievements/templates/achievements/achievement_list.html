@@ -1,3 +1,5 @@
+{% load achievement_tags %}
+
 <div class="modal hide fade" id="positionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -18,9 +20,7 @@
 	    <div class="pull-left" style="padding-left:30px;">
 	        <p><b>{{ achievement.name }}</b></p>
 	        <p>{{ achievement.description }}</p>
-            {% if achievement.get_subclass %}
-	           {% autoescape off %}{{ achievement.get_subclass }}{% endautoescape %}
-            {% endif %}
+            	{% render_subachievement user achievement %}
 	    </div>
 	    <div class="pull-right">
 	        <p>{{ achievement.points }} XP</p>
@@ -47,9 +47,7 @@
 	    <div class="pull-left" style="padding-left:30px;">
 	        <p><b>{{ achievement.name }}</b></p>
             <p>{{ achievement.description }}</p>
-            {% if achievement.get_subclass %}
-               {% autoescape off %}{{ achievement.get_subclass }}{% endautoescape %}
-            {% endif %}
+            {% render_subachievement user achievement %}
 	    </div>
 	    <div class="pull-right">
 	        <p>{{ achievement.points }} XP</p>
