@@ -50,22 +50,25 @@ class Achievement(models.Model):
 
     def __unicode__(self):
         return self.name
-    
-    def get_subclass(self):
-        if hasattr(self, 'progressachievement'):
-            return self.progressachievement.render()
-        if hasattr(self, 'taskachievement'):
-            return self.taskachievement.render()
-        if hasattr(self, 'collectionachievement'):
-            return self.collectionachievement.render()
 
 class ProgressAchievement(Achievement):
     required_amount = models.PositiveIntegerField()
     user = models.ManyToManyField(User, related_name="progress_achievements", through="Progress")
     
-    def render(self):
-        output = Template( "<p>{{ required_amount }}</p><p>{{ achieved_amount }}</p>")
-        c = Context({"required_amount": self.required_amount})
+    def render(self, user):
+        try:
+            self.amount_progress.get(user=user)
+        except:
+            amount = 0
+            percentage = 0
+        else:
+            achieved = self.amount_progress.get(user=user)
+            amount = achieved.achieved_amount
+            percentage = int(amount / float(self.required_amount) *100.0)
+        #if amount == self.required_amount:
+            #self.users.create(id=user.id)
+        output = Template( "<div class='progress_bar'><div class='progress'><div class='bar' style='width: {{ percentage }}%'></div></div><div class='percent'><p style='margin-top: -40px'>{{ achieved_amount }} / {{ required_amount }}</p></div></div>")
+        c = Context({"required_amount": self.required_amount, 'achieved_amount': amount, 'percentage': percentage})
         return output.render(c)
 
 class Progress(models.Model):
@@ -84,16 +87,16 @@ class TaskAchievement(Achievement):
     tasks = models.ManyToManyField(Task)
     user = models.ManyToManyField(User, related_name="task_achievements", through="TaskProgress")
     
-    def render(self):
+    def render(self, user):
         completed_task_list = []
-        for task in self.task_progress.filter(user=self.user.all()):
+        for task in self.task_progress.filter(user=user):
             for complete in task.completed_tasks.all():
                 completed_task_list.append(complete)
         task_list = self.tasks.all()
         task_names = []
         for task in task_list:
             task_names.append(task)
-        output = Template("{% for task in task_names %}<p style='float: left; padding: 5px;{% if not task in completed_task_list %} color: #990000{% endif %}'>{{ task.name }}</p>{% endfor %}")
+        output = Template("{% for task in task_names %}<p style='float: left; padding: 5px;{% if task in completed_task_list %} color: #62C462{% endif %}'>{{ task.name }}</p>{% endfor %}")
         c = Context({"task_names": task_names, "completed_task_list": completed_task_list})
         return output.render(c)
 
@@ -108,10 +111,10 @@ class TaskProgress(models.Model):
 class CollectionAchievement(Achievement):
     achievements = models.ManyToManyField(Achievement, related_name="collection_achievements")
     
-    def render(self):
+    def render(self, user):
         print self.achievements.all()
-        output = Template("{% for ach in achievements %}<p>{{ach.name}}</p>{% endfor %}")
-        c = Context({"achievements": self.achievements})
+        output = Template("{% for ach in achievements.all %}<p style='float: left; padding: 5px;{% if ach in achievements_accomplished %} color: #62C462{% endif %}'>{{ach.name}}</p>{% endfor %}")
+        c = Context({"achievements": self.achievements, 'achievements_accomplished': Achievement.objects.filter(users = user)})
         return output.render(c)
 
 class Trophy(models.Model):
