@@ -1,27 +1,29 @@
 from django.db import models
+from django.db.models.signals import m2m_changed
 from django.contrib.auth.models import User
 from filebrowser.fields import FileBrowseField
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxLengthValidator
 from django.template import Template, Context
+from django.core.exceptions import ValidationError
 import validate
 
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     parent_category = models.ForeignKey('self', blank=True, null=True, related_name="child_categories")
-    
+
     def count_achievements(self):
         return self.achievements.all().count()
-    
+
     def count_all_achievements(self):
         count = self.achievements.all().count()
         for cat in self.child_categories.all():
             count += cat.count_all_achievements()
         return count
-    
+
     def count_complete_achievements(self, user):
         return self.achievements.filter(users=user).count()
-    
+
     def count_all_complete_achievements(self, user):
         count = self.count_complete_achievements(user)
         for child in self.child_categories.all():
@@ -33,7 +35,7 @@ class Category(models.Model):
         if all == 0:
             return 0
         return int(self.count_all_complete_achievements(user)/all*100)
-    
+
     def __unicode__(self):
         if (self.parent_category != None):
             return "%s - %s" % (self.parent_category, self.name)
@@ -54,7 +56,7 @@ class Achievement(models.Model):
 class ProgressAchievement(Achievement):
     required_amount = models.PositiveIntegerField()
     user = models.ManyToManyField(User, related_name="progress_achievements", through="Progress")
-    
+
     def render(self, user):
         try:
             self.amount_progress.get(user=user)
@@ -71,6 +73,27 @@ class ProgressAchievement(Achievement):
         c = Context({"required_amount": self.required_amount, 'achieved_amount': amount, 'percentage': percentage})
         return output.render(c)
 
+    def save(self):
+        if self.pk is None:
+            super(ProgressAchievement, self).save()
+        else:
+            try:
+                self.amount_progress.get()
+            except:
+                raise ValidationError('This User has not earned this achievement yet')
+            else:
+                for pro in self.amount_progress.all():
+                    print "hallo2"
+                    if self.users.get(id=pro.user.id):
+                        print "hallo3"
+                        if pro.achieved_amount == self.required_amount:
+                            print "hallo4"
+                            super(ProgressAchievement, self).save()
+                        else:
+                            raise ValidationError('This User has not earned this achievement yet')
+                    else:
+                        raise ValidationError('This User has not earned this achievement yet')
+
 class Progress(models.Model):
     user = models.ForeignKey(User)
     progress_achievement = models.ForeignKey(ProgressAchievement, related_name="amount_progress")
@@ -79,14 +102,14 @@ class Progress(models.Model):
 class Task(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     description = models.TextField(_("Description"))
-    
+
     def __unicode__(self):
         return self.name
 
 class TaskAchievement(Achievement):
     tasks = models.ManyToManyField(Task)
     user = models.ManyToManyField(User, related_name="task_achievements", through="TaskProgress")
-    
+
     def render(self, user):
         completed_task_list = []
         for task in self.task_progress.filter(user=user):
@@ -104,13 +127,13 @@ class TaskProgress(models.Model):
     user = models.ForeignKey(User)
     task_achievement = models.ForeignKey(TaskAchievement, related_name="task_progress")
     completed_tasks = models.ManyToManyField(Task, limit_choices_to={})
-    
+
     def __unicode__(self):
         return self.task_achievement.name
 
 class CollectionAchievement(Achievement):
     achievements = models.ManyToManyField(Achievement, related_name="collection_achievements")
-    
+
     def render(self, user):
         print self.achievements.all()
         output = Template("{% for ach in achievements.all %}<p style='float: left; padding: 5px;{% if ach in achievements_accomplished %} color: #62C462{% endif %}'>{{ach.name}}</p>{% endfor %}")
@@ -121,18 +144,17 @@ class Trophy(models.Model):
     achievement = models.ForeignKey(Achievement, blank=True, related_name="trophy")
     user = models.ForeignKey(User)
     position = models.PositiveIntegerField(validators=[validate.validate_max])
-    
+
     class Meta:
         unique_together = (("user","position"),("user", "achievement"))
-    
+
     def clean(self):
-        from django.core.exceptions import ValidationError
         try:
             self.achievement.users.get(id=self.user.id)
         except:
             raise ValidationError('This User has not earned this achievement yet')
         if self.user is None:
             raise ValidationError('Select an User')
-    
+
     def __unicode__(self):
         return self.achievement.name
