@@ -18,7 +18,11 @@
         </a>
         {% else %}
         <a class="thumbnail" rel="popover" data-toggle="modal" href="{% url achievements:trophy_modal trophy_pos=forloop.counter0 %}" data-target="#trophyModal" data-content="{{trophy.achievement.description}}" data-original-title="{{trophy.achievement.name}}" data-placement="bottom">
+            {% if trophy.achievement.icon %}
             <img src="{{ trophy.achievement.icon.url }}" alt="{{ trophy }}">
+            {% else %}
+            <div class="empty_trophy">{{ trophy }}</div>
+            {% endif %}
         </a>
         {% endif %}
     </li>
