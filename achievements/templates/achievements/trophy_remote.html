@@ -1,3 +1,5 @@
+{% load achievement_tags %}
+
 {% for achievement in complete_achievements_list %}
 	{% if not achievement in trophies %}
 	<a href="{% url achievements:trophy achievement_id=achievement.id trophy_slot=trophy_pos %}">
@@ -6,7 +8,9 @@
 	        <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" />
 	    </div>
 	    <div class="pull-left" style="padding-left:30px;">
-	        {% autoescape off %}{{ achievement.render }}{% endautoescape %}
+	        <p><b>{{ achievement.name }}</b></p>
+            <p>{{ achievement.description }}</p>
+                {% render_subachievement user achievement %}
 	    </div>
 	    <div class="pull-right">
 	        <p>{{ achievement.points }} XP</p>
