@@ -11,6 +11,8 @@
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 	</div>
 </div>
+
+<div class="achievement_list">
 {% for achievement in achievement_list %}
 	{% if achievement in achievements_accomplished %}
 	<div class="well{% if achievement not in achievements_accomplished %} muted{% endif %}">
@@ -59,4 +61,4 @@
 {% if not achievement_list %}
 <p>No Achievements!</p>
 {% endif %}
-
+</div>
