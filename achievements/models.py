@@ -54,7 +54,7 @@ class Achievement(models.Model):
         return self.name
 
 class ProgressAchievement(Achievement):
-    required_amount = models.PositiveIntegerField()
+    required_amount = models.PositiveIntegerField(blank=False, null=False)
     user = models.ManyToManyField(User, related_name="progress_achievements", through="Progress")
 
     def render(self, user):
@@ -73,31 +73,20 @@ class ProgressAchievement(Achievement):
         c = Context({"required_amount": self.required_amount, 'achieved_amount': amount, 'percentage': percentage})
         return output.render(c)
 
-    def save(self):
-        if self.pk is None:
-            super(ProgressAchievement, self).save()
-        else:
-            try:
-                self.amount_progress.get()
-            except:
-                raise ValidationError('This User has not earned this achievement yet')
-            else:
-                for pro in self.amount_progress.all():
-                    print "hallo2"
-                    if self.users.get(id=pro.user.id):
-                        print "hallo3"
-                        if pro.achieved_amount == self.required_amount:
-                            print "hallo4"
-                            super(ProgressAchievement, self).save()
-                        else:
-                            raise ValidationError('This User has not earned this achievement yet')
-                    else:
-                        raise ValidationError('This User has not earned this achievement yet')
-
 class Progress(models.Model):
     user = models.ForeignKey(User)
     progress_achievement = models.ForeignKey(ProgressAchievement, related_name="amount_progress")
-    achieved_amount = models.PositiveIntegerField()
+    achieved_amount = models.PositiveIntegerField(blank=False)
+
+    class Meta:
+        unique_together = ("user", "progress_achievement")
+
+    def __unicode__(self):
+        return self.progress_achievement.name
+
+    def clean(self):
+        if self.achieved_amount > self.progress_achievement.required_amount:
+            raise ValidationError('Achieved Amount may not be bigger than required amount')
 
 class Task(models.Model):
     name = models.CharField(_("Name"), max_length=255)
@@ -126,7 +115,7 @@ class TaskAchievement(Achievement):
 class TaskProgress(models.Model):
     user = models.ForeignKey(User)
     task_achievement = models.ForeignKey(TaskAchievement, related_name="task_progress")
-    completed_tasks = models.ManyToManyField(Task, limit_choices_to={})
+    completed_tasks = models.ManyToManyField(Task)
 
     def __unicode__(self):
         return self.task_achievement.name
@@ -141,9 +130,9 @@ class CollectionAchievement(Achievement):
         return output.render(c)
 
 class Trophy(models.Model):
-    achievement = models.ForeignKey(Achievement, blank=True, related_name="trophy")
+    achievement = models.ForeignKey(Achievement, blank=False, related_name="trophy")
     user = models.ForeignKey(User)
-    position = models.PositiveIntegerField(validators=[validate.validate_max])
+    position = models.PositiveIntegerField(validators=[validate.validate_max], blank=False, null=False)
 
     class Meta:
         unique_together = (("user","position"),("user", "achievement"))
