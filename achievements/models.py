@@ -128,6 +128,13 @@ class TaskProgress(models.Model):
     def __unicode__(self):
         return self.task_achievement.name
 
+@receiver(m2m_changed, sender=TaskProgress.completed_tasks.through)
+def set_task_user(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if instance.completed_tasks.count() == instance.task_achievement.tasks.count():
+        instance.task_achievement.users.add(instance.user)
+    elif instance.user in instance.task_achievement.users.all():
+            instance.task_achievement.users.remove(instance.user)
+
 class CollectionAchievement(Achievement):
     achievements = models.ManyToManyField(Achievement, related_name="collection_achievements")
 
