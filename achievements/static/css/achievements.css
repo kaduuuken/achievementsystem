@@ -1,4 +1,45 @@
+.overview{
+    margin-top: 5%;
+}
+
+.progress_bar{
+    position: relative;
+    height:25px;
+}
+
+.child_progress_bar{
+    position: relative;
+    height:25px;
+    width: 90%;
+}
+
+.percent{
+    text-align:center;
+    font-weight:bold;
+    margin-top: -4.5%;
+    width: 100%;
+}
+
+.child_percent{
+    text-align:center;
+    font-weight:bold;
+    margin-top: -9.8%;
+    width: 100%;
+}
+
+.category-child{
+    height: 10%;
+    width: 50%;
+    margin-top: 5%;
+    float:left;
+}
+
 .empty_trophy{
     display: block;
     height: 120px;
+}
+
+.achievement_list{
+    height: 600px;
+    overflow-y: scroll;
 }
