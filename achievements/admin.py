@@ -60,7 +60,41 @@ class ProgressAchievementAdmin(admin.ModelAdmin):
         models.ManyToManyField: {'widget': FilteredSelectMultiple("user", False)}
     }
 
+class TaskAchievementAdminForm(forms.ModelForm):
+    class Meta:
+        model = TaskAchievement
+    
+    def clean(self):
+        users = self.cleaned_data.get('users')
+        tasks = self.cleaned_data.get('tasks')
+        progress = TaskProgress.objects.filter(task_achievement__id = self.instance.id)
+        if self.instance.id:
+            if users:
+                if not progress:
+                    raise ValidationError('This User has not earned this achievement yet')
+                else:
+                    for pro in progress:
+                        if pro.user in users:
+                            if not pro.completed_tasks.count() == tasks.count():
+                                raise ValidationError('This User has not earned this achievement yet')
+                            else:
+                                if not users.count() == 1:
+                                    raise ValidationError('This User has not earned this achievement yet')
+                                else:
+                                    return self.cleaned_data
+                        else:
+                            if progress.count() == 1:
+                                raise ValidationError('This User has not earned this achievement yet')
+                    raise ValidationError('This User has not earned this achievement yet')
+            else:
+                return self.cleaned_data
+        elif users:
+            raise ValidationError('You can not add user for this achievement yet')
+        else:
+            return self.cleaned_data
+
 class TaskAchievementAdmin(admin.ModelAdmin):
+    form = TaskAchievementAdminForm
     list_display=['name', 'description', 'category']
     search_fields = ('name', 'category')
     formfield_overrides = {
