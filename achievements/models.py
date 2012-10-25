@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models.signals import m2m_changed
+from django.db.models.signals import post_save, m2m_changed
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 from filebrowser.fields import FileBrowseField
 from django.utils.translation import ugettext_lazy as _
@@ -87,6 +88,13 @@ class Progress(models.Model):
     def clean(self):
         if self.achieved_amount > self.progress_achievement.required_amount:
             raise ValidationError('Achieved Amount may not be bigger than required amount')
+
+@receiver(post_save, sender=Progress)
+def set_progress_user(sender, instance, created, **kwargs):
+    if instance.achieved_amount == instance.progress_achievement.required_amount:
+        instance.progress_achievement.users.add(instance.user)
+    elif instance.user in instance.progress_achievement.users.all():
+            instance.progress_achievement.users.remove(instance.user)
 
 class Task(models.Model):
     name = models.CharField(_("Name"), max_length=255)
