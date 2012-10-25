@@ -144,6 +144,45 @@ class CollectionAchievement(Achievement):
         c = Context({"achievements": self.achievements, 'achievements_accomplished': Achievement.objects.filter(users = user)})
         return output.render(c)
 
+@receiver(m2m_changed, sender=Achievement.users.through)
+def set_collection_user(sender, instance, action, reverse, model, pk_set,  **kwargs):
+    collectionachievement = []
+    if instance.collection_achievements.all():
+        for ach in instance.collection_achievements.all():
+            collectionachievement.append(CollectionAchievement.objects.get(id = ach.id))
+        if action == "post_clear":
+            if not instance.users.all():
+                for collection in collectionachievement:
+                    for collect_user in collection.users.all():
+                        if not collect_user in instance.users.all():
+                            collection.users.remove(collect_user)
+        elif action == "post_add":
+            for collection in collectionachievement:
+                not_earned_users = []
+                earned_achievements = []
+                earned_achievements.append(instance)
+                for achievement in collection.achievements.all():
+                    for user in instance.users.all():                        
+                        if not achievement.id == instance.id:
+                            if user in achievement.users.all():
+                                if not achievement in earned_achievements:
+                                    earned_achievements.append(achievement)
+                            elif not user in not_earned_users:
+                                not_earned_users.append(user)
+                if len(earned_achievements) == collection.achievements.count():
+                    if collection.users.all():
+                        for collect_user in collection.users.all():
+                            if collect_user in instance.users.all():
+                                for user in instance.users.all():
+                                    if not user in not_earned_users:
+                                        collection.users.add(user)
+                            else:
+                                collection.users.remove(collect_user)
+                    else:
+                        for user in instance.users.all():
+                            if not user in not_earned_users:
+                                collection.users.add(user)
+
 class Trophy(models.Model):
     achievement = models.ForeignKey(Achievement, blank=False, related_name="trophy")
     user = models.ForeignKey(User)
