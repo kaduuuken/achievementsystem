@@ -41,7 +41,8 @@ def TrophyModalView(request, trophy_pos):
     return render_to_response('achievements/trophy_remote.html', 
                               {'trophy_pos': trophy_pos,
                                'complete_achievements_list': complete_achievements_list,
-                               'trophies': trophy_achievements}, 
+                               'trophies': trophy_achievements,
+                               'user': request.user}, 
                               context_instance=RequestContext(request))
 
 def TrophyView(request, achievement_id, trophy_slot):
