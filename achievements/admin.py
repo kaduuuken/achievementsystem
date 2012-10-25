@@ -9,7 +9,75 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display=['name', 'parent_category']
     search_fields = ('name', 'parent_category')
 
+class AchievementAdminForm(forms.ModelForm):
+    class Meta:
+        model = Achievement
+
+    def clean(self):
+        users = self.cleaned_data.get('users')
+        progress = Progress.objects.filter(progress_achievement__id = self.instance.id)
+        taskprogress = TaskProgress.objects.filter(task_achievement__id = self.instance.id)
+        if self.instance.id:
+            if users:
+                try:
+                    progressachievement = ProgressAchievement.objects.get(id = self.instance.id)
+                except:
+                    try:
+                        taskachievement = TaskAchievement.objects.get(id = self.instance.id)
+                    except:
+                        try:
+                            collectionachievement = CollectionAchievement.objects.get(id = self.instance.id)
+                        except:
+                            return self.cleaned_data
+                        else:
+                            for achievement in collectionachievement.achievements.all():
+                                for user in users:
+                                    if not user in achievement.users.all():
+                                        raise ValidationError('This User has not earned this achievement yet')
+                            return self.cleaned_data
+                    else:
+                        if not taskprogress:
+                            raise ValidationError('This User has not earned this achievement yet')
+                        else:
+                            for pro in taskprogress:
+                                if pro.user in users:
+                                    if not pro.completed_tasks.count() == taskachievement.tasks.count():
+                                        raise ValidationError('This User has not earned this achievement yet')
+                                    else:
+                                        if not users.count() == 1:
+                                            raise ValidationError('This User has not earned this achievement yet')
+                                        else:
+                                            return self.cleaned_data
+                                else:
+                                    if taskprogress.count() == 1:
+                                        raise ValidationError('This User has not earned this achievement yet')
+                            raise ValidationError('This User has not earned this achievement yet')
+                else:
+                    if not progress:
+                        raise ValidationError('This User has not earned this achievement yet')
+                    else:
+                        for pro in progress:
+                            if pro.user in users:
+                                if not pro.achieved_amount == progressachievement.required_amount:
+                                    raise ValidationError('This User has not earned this achievement yet')
+                                else:
+                                    if not users.count() == 1:
+                                        raise ValidationError('This User has not earned this achievement yet')
+                                    else:
+                                        return self.cleaned_data
+                            else:
+                                if progress.count() == 1:
+                                    raise ValidationError('This User has not earned this achievement yet')
+                        raise ValidationError('This User has not earned this achievement yet')
+            else:
+                return self.cleaned_data
+        elif users:
+            raise ValidationError('You can not add user for this achievement yet')
+        else:
+            return self.cleaned_data
+
 class AchievementAdmin(admin.ModelAdmin):
+    form = AchievementAdminForm
     list_display=['name', 'description', 'category']
     search_fields = ('name', 'category')
     formfield_overrides = {
