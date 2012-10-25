@@ -104,7 +104,24 @@ class TaskAchievementAdmin(admin.ModelAdmin):
         models.ManyToManyField: {'widget': FilteredSelectMultiple("users", False)}
     }
 
+class CollectionAchievementAdminForm(forms.ModelForm):
+    class Meta:
+        model = CollectionAchievement
+    
+    def clean(self):
+        users = self.cleaned_data.get('users')
+        achievements = self.cleaned_data.get('achievements')
+        if users:
+            for achievement in achievements:
+                for user in users:
+                    if not user in achievement.users.all():
+                        raise ValidationError('This User has not earned this achievement yet')
+            return self.cleaned_data
+        else:
+            return self.cleaned_data
+
 class CollectionAchievementAdmin(admin.ModelAdmin):
+    form = CollectionAchievementAdminForm
     list_display=['name', 'description', 'category']
     search_fields = ('name', 'category')
     formfield_overrides = {
