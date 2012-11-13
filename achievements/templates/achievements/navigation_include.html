@@ -4,10 +4,12 @@
     </a>  
 </li>
 {% if category.child_categories.all.count > 0 %}
+    {# check, if current category is a main category or one of its child categories #}
     {% if category == current_category or category == current_category.parent_category %}
     <li>
         <ul class="nav nav-list">
         {% for child in category.child_categories.all %}
+        {# including this template with parameters child #}
         {% include template with category=child %}
         {% endfor %}
         </ul>
