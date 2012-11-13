@@ -6,20 +6,18 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="{{ STATIC_URL }}/css/achievements.css"/>
         <script type="text/javascript" src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
-        <script type="text/javascript">
-
-        </script>
+        {# Pop-Over function in Trophies List #}
         <script type="text/javascript">
             $(function (){
                 $("[rel=popover]").popover({trigger: 'hover'});
             });
         </script>
-        {% block extra_headers %}{% endblock %}
     </head>
     <body>
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span2">
+                    {# calling render_navigation function at inclusion tag file (achievement_tags.py) #}
                     {% render_navigation category %}
                 </div>
                 <div class="span9">
