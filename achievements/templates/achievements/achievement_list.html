@@ -1,5 +1,7 @@
 {% load achievement_tags %}
 
+{# Pop-up window for choosing position for achievement in trophy list #}
+{# content for body in position_remote.html #}
 <div class="modal hide fade" id="positionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -13,16 +15,19 @@
 </div>
 
 <div class="achievement_list">
+{# list of all achievements belonging to the selected category #}
 {% for achievement in achievement_list %}
+    {# accomplished achievement are shown first #}
 	{% if achievement in achievements_accomplished %}
-	<div class="well{% if achievement not in achievements_accomplished %} muted{% endif %}">
+	<div class="well">
 	    <div class="pull-left">
 	        <img src="{{ achievement.icon.url }}" alt="{{ achievement.name }}" />
 	    </div>
 	    <div class="pull-left" style="padding-left:30px;">
 	        <p><b>{{ achievement.name }}</b></p>
 	        <p>{{ achievement.description }}</p>
-            	{% render_subachievement user achievement %}
+	        {# calling render_subachievement function with parameters user and achievement at inclusion tag file (achievement_tags.py) #}
+            {% render_subachievement user achievement %}
 	    </div>
 	    <div class="pull-right">
 	        <p>{{ achievement.points }} XP</p>
@@ -42,8 +47,9 @@
 {% endfor %}
 {% for achievement in achievement_list %}
 	{% if not achievement in achievements_accomplished %}
-	<div class="well{% if achievement not in achievements_accomplished %} muted{% endif %}">
+	<div class="well muted">
 	    <div class="pull-left">
+	        {# standard icon for not yet accomplished achievements #}
 	        <img src="{{ MEDIA_URL }}uploads/icons/standard.png" alt="Standard" />
 	    </div>
 	    <div class="pull-left" style="padding-left:30px;">
