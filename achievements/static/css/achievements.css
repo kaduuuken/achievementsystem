@@ -1,32 +1,28 @@
+/* put the overview content down a bit */
 .overview{
     margin-top: 5%;
 }
 
-.progress_bar{
-    position: relative;
-    height:25px;
-}
-
+/* set the width of the progress bar for the child category */
 .child_progress_bar{
-    position: relative;
-    height:25px;
     width: 90%;
 }
 
+/* settings for the content of the progress bar */
 .percent{
     text-align:center;
     font-weight:bold;
     margin-top: -4.5%;
-    width: 100%;
 }
 
+/* settings for the content of the child category progress bar */
 .child_percent{
     text-align:center;
     font-weight:bold;
     margin-top: -9.8%;
-    width: 100%;
 }
 
+/* settings for the child category at the overview */
 .category-child{
     height: 10%;
     width: 50%;
@@ -34,11 +30,12 @@
     float:left;
 }
 
+/* set the trophies at the same height, even if they have no content or picture */
 .empty_trophy{
-    display: block;
     height: 120px;
 }
 
+/* set the height of the achievement list and make it scrollable */
 .achievement_list{
     height: 600px;
     overflow-y: scroll;
