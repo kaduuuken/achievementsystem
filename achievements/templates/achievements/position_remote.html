@@ -1,4 +1,5 @@
 {% for position in positions %}
+    {# link calling TrophyView in views.py #}
 	<a href="{% url achievements:trophy achievement_id=achievement.id trophy_slot=forloop.counter0 %}">
 		<div class="well" style="float: left; margin: 10px">
 			<p><b>{{forloop.counter}}</b></p>
