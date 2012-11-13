@@ -13,24 +13,29 @@ class Category(models.Model):
     name = models.CharField(_("Name"), max_length=255)
     parent_category = models.ForeignKey('self', blank=True, null=True, related_name="child_categories")
 
+    # count all achievements according to the selected category
     def count_achievements(self):
         return self.achievements.all().count()
 
+    # count all achievements according to the selected category and its child categories
     def count_all_achievements(self):
         count = self.achievements.all().count()
         for cat in self.child_categories.all():
             count += cat.count_all_achievements()
         return count
 
+    # count all achievement according to the selected category, which have been accomplished
     def count_complete_achievements(self, user):
         return self.achievements.filter(users=user).count()
 
+    # count all achievement according to the selected category and its child categories, which have been accomplished
     def count_all_complete_achievements(self, user):
         count = self.count_complete_achievements(user)
         for child in self.child_categories.all():
             count += child.count_all_complete_achievements(user)
         return count
 
+    # percentage of accomplished achievements for the selected category and its child categories
     def get_complete_percentage(self, user):
         all = float(self.count_all_achievements())
         if all == 0:
@@ -58,6 +63,7 @@ class ProgressAchievement(Achievement):
     required_amount = models.PositiveIntegerField(blank=False, null=False)
     user = models.ManyToManyField(User, related_name="progress_achievements", through="Progress")
 
+    # returns progress bar and its content as template
     def render(self, user):
         try:
             self.amount_progress.get(user=user)
@@ -68,8 +74,6 @@ class ProgressAchievement(Achievement):
             achieved = self.amount_progress.get(user=user)
             amount = achieved.achieved_amount
             percentage = int(amount / float(self.required_amount) *100.0)
-        #if amount == self.required_amount:
-            #self.users.create(id=user.id)
         output = Template( "<div class='progress_bar'><div class='progress'><div class='bar' style='width: {{ percentage }}%'></div></div><div class='percent'><p style='margin-top: -40px'>{{ achieved_amount }} / {{ required_amount }}</p></div></div>")
         c = Context({"required_amount": self.required_amount, 'achieved_amount': amount, 'percentage': percentage})
         return output.render(c)
@@ -85,10 +89,13 @@ class Progress(models.Model):
     def __unicode__(self):
         return self.progress_achievement.name
 
+    # value of achieved amount may not be bigger than the required amount
     def clean(self):
         if self.achieved_amount > self.progress_achievement.required_amount:
             raise ValidationError('Achieved Amount may not be bigger than required amount')
 
+# if achieved amount of progress table is the same as the required amount of the progress achievement table
+# the according user of the progress will be added to the progress achievement
 @receiver(post_save, sender=Progress)
 def set_progress_user(sender, instance, created, **kwargs):
     if instance.achieved_amount == instance.progress_achievement.required_amount:
@@ -107,6 +114,8 @@ class TaskAchievement(Achievement):
     tasks = models.ManyToManyField(Task)
     user = models.ManyToManyField(User, related_name="task_achievements", through="TaskProgress")
 
+    # returns required tasks as template
+    # task is green if accomplished, grey if not
     def render(self, user):
         completed_task_list = []
         for task in self.task_progress.filter(user=user):
@@ -128,6 +137,7 @@ class TaskProgress(models.Model):
     def __unicode__(self):
         return self.task_achievement.name
 
+# if user has accomplished all required tasks, he will be added to the according task achievement
 @receiver(m2m_changed, sender=TaskProgress.completed_tasks.through)
 def set_task_user(sender, instance, action, reverse, model, pk_set, **kwargs):
     if instance.completed_tasks.count() == instance.task_achievement.tasks.count():
@@ -138,24 +148,33 @@ def set_task_user(sender, instance, action, reverse, model, pk_set, **kwargs):
 class CollectionAchievement(Achievement):
     achievements = models.ManyToManyField(Achievement, related_name="collection_achievements")
 
+    # returns required achievements as template
+    # achievement is green if accomplished, grey if not
     def render(self, user):
         print self.achievements.all()
         output = Template("{% for ach in achievements.all %}<p style='float: left; padding: 5px;{% if ach in achievements_accomplished %} color: #62C462{% endif %}'>{{ach.name}}</p>{% endfor %}")
         c = Context({"achievements": self.achievements, 'achievements_accomplished': Achievement.objects.filter(users = user)})
         return output.render(c)
 
+# if user has accomplished all required achievements, he will be added to the according collection achievement
 @receiver(m2m_changed, sender=Achievement.users.through)
 def set_collection_user(sender, instance, action, reverse, model, pk_set,  **kwargs):
     collectionachievement = []
+    # is achievement an required achievement of an collection achievement
     if instance.collection_achievements.all():
         for ach in instance.collection_achievements.all():
+            # add all collection achievements, in which the selected achievement is required, to an array
             collectionachievement.append(CollectionAchievement.objects.get(id = ach.id))
+        # if user has no longer accomplished the achievement, he will be removed from the according collection achievement
         if action == "post_clear":
             if not instance.users.all():
                 for collection in collectionachievement:
                     for collect_user in collection.users.all():
                         if not collect_user in instance.users.all():
                             collection.users.remove(collect_user)
+        # if a new user is added to the selected achievement, all other achievements according to the same collection achievement
+        # will be checked on the same user
+        # if the user has accomplished all required achievement, he will be added to the collection achievement
         elif action == "post_add":
             for collection in collectionachievement:
                 not_earned_users = []
@@ -164,11 +183,15 @@ def set_collection_user(sender, instance, action, reverse, model, pk_set,  **kwa
                 for achievement in collection.achievements.all():
                     for user in instance.users.all():                        
                         if not achievement.id == instance.id:
+                            # check, if user has accomplished other required achievement of the collection achievement
                             if user in achievement.users.all():
                                 if not achievement in earned_achievements:
+                                    # add other required achievement to an array
                                     earned_achievements.append(achievement)
                             elif not user in not_earned_users:
+                                # add user to an array
                                 not_earned_users.append(user)
+                # check, if amount of earned achievements is the same as the amount of required achievements in the collection achievement
                 if len(earned_achievements) == collection.achievements.count():
                     if collection.users.all():
                         for collect_user in collection.users.all():
@@ -180,17 +203,21 @@ def set_collection_user(sender, instance, action, reverse, model, pk_set,  **kwa
                                 collection.users.remove(collect_user)
                     else:
                         for user in instance.users.all():
+                            # check, if user is not in array, which contains the users, which have not earned all required achievements
                             if not user in not_earned_users:
                                 collection.users.add(user)
 
 class Trophy(models.Model):
     achievement = models.ForeignKey(Achievement, blank=False, related_name="trophy")
     user = models.ForeignKey(User)
+    # function validate_max in validate.py checks, if given value is higher than the set amounts of positions (set in achievements/settings.py)
     position = models.PositiveIntegerField(validators=[validate.validate_max], blank=False, null=False)
 
     class Meta:
         unique_together = (("user","position"),("user", "achievement"))
 
+    # check, if selected achievement has already been accomplished
+    # check, if user has been selected
     def clean(self):
         try:
             self.achievement.users.get(id=self.user.id)
