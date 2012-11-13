@@ -1,7 +1,9 @@
 {% load achievement_tags %}
 
 {% for achievement in complete_achievements_list %}
+    {# show achievement accomplished by user, which are not yet in the trophy list #}
 	{% if not achievement in trophies %}
+	{# link calling TrophyView in views.py #}
 	<a href="{% url achievements:trophy achievement_id=achievement.id trophy_slot=trophy_pos %}">
 	<div class="well">
 	    <div class="pull-left">
@@ -10,7 +12,8 @@
 	    <div class="pull-left" style="padding-left:30px;">
 	        <p><b>{{ achievement.name }}</b></p>
             <p>{{ achievement.description }}</p>
-                {% render_subachievement user achievement %}
+            {# calling render_subachievement function with parameters user and achievement at inclusion tag file (achievement_tags.py) #}
+            {% render_subachievement user achievement %}
 	    </div>
 	    <div class="pull-right">
 	        <p>{{ achievement.points }} XP</p>
