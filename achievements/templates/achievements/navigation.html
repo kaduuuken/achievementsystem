@@ -1,13 +1,14 @@
 <div class="well" style="padding: 8px 0;">
     <ul class="nav nav-list">
         <li class="nav-header">
-            <a href="{% url achievements:overview %}">
+            <a href="{% url achievements:overview %}"> {# link to startpage #}
                 <b>Overview</b>
             </a>  
         </li>
         {% for category in categories %}
         <li class="divider"></li>
         <li>
+        {# including navigation_include.html with parameter category #}
         {% include "achievements/navigation_include.html" with category=category template="achievements/navigation_include.html" %}
         </li>
         {% endfor %}
