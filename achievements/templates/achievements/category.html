@@ -15,10 +15,13 @@
     </div>
 </div>
 {% if category.child_categories.all.count > 0 %}
+{# if category has child categories, content will be an overview over the progresses of the category and child categories #}
 {% for category in category_list %}
+{# calling render_category function with parameters category and user at inclusion tag file (achievement_tags.py) #}
 {% render_category category user %}
 {% endfor %}
 {% else %}
+{# if category has no child categories, the achievement list of the category will be shown #}
 <p><b>Achievements:</b></p>
 {% include "achievements/achievement_list.html" %}
 {% endif %}
