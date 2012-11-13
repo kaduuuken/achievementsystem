@@ -1,3 +1,5 @@
+{# Pop-up window for choosing achievement for trophy list #}
+{# content for body in trophy_remote.html #}
 <div class="modal hide fade" id="trophyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -13,14 +15,17 @@
     {% for trophy in trophies %}
     <li class="span2">
         {% if trophy == null %}
+        {# if there is no trophy at the selected position, the content of the popover will be "Empty, click to set trophy" #}
         <a class="thumbnail" rel="popover" data-toggle="modal" href="{% url achievements:trophy_modal trophy_pos=forloop.counter0 %}" data-target="#trophyModal" data-content="Click to set trophy" data-original-title="Empty" data-placement="bottom">
             <div class="empty_trophy"><i class="icon-search"></i></div>
         </a>
         {% else %}
+        {# if there is a trophy at the selected position, the content of the popover will be title and description of the achievement #}
         <a class="thumbnail" rel="popover" data-toggle="modal" href="{% url achievements:trophy_modal trophy_pos=forloop.counter0 %}" data-target="#trophyModal" data-content="{{trophy.achievement.description}}" data-original-title="{{trophy.achievement.name}}" data-placement="bottom">
             {% if trophy.achievement.icon %}
             <img src="{{ trophy.achievement.icon.url }}" alt="{{ trophy }}">
             {% else %}
+            {# if the trophy has no icon, the title will be shown #}
             <div class="empty_trophy">{{ trophy }}</div>
             {% endif %}
         </a>
